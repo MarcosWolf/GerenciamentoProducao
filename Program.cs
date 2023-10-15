@@ -102,6 +102,72 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static bool MP_ConfirmChange()
+        {
+            string? input = "";
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(0, 9);
+                    Console.WriteLine("|                                                                         |");
+                    Console.SetCursorPosition(2, 9);
+                    Console.WriteLine("Deseja confirmar a entrada? (S/N):");
+                    Console.WriteLine("+-------------------------------------------------------------------------+");
+                    Console.SetCursorPosition(37, 9);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 11);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 11);
+                        Console.WriteLine("Confirmação inválida.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 11);
+                        ClearCurrentConsoleLine(0, 12);
+                        input = "";
+                    }
+                    else
+                    {
+                        input = input.Trim().ToUpper();
+
+                        if (input != "S" && input != "N")
+                        {
+                            Console.SetCursorPosition(0, 11);
+                            Console.WriteLine("|                                                                         |");
+                            Console.SetCursorPosition(2, 11);
+                            Console.WriteLine("Confirmação inválida.");
+                            Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                            System.Threading.Thread.Sleep(1000);
+                            ClearCurrentConsoleLine(0, 11);
+                            ClearCurrentConsoleLine(0, 12);
+                            input = "";
+                        }
+                        else if (input == "S")
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida: " + ex);
+                }
+            }
+
+            return false;
+        }
+
         public static string MP_ValidateProductQuantity()
         {
             string? input = "";
@@ -276,6 +342,29 @@ namespace GerenciamentoProducao
 
                 int productId = Convert.ToInt32(MP_ValidateProductInput(connector));
                 int productQuantity = Convert.ToInt32(MP_ValidateProductQuantity());
+                bool productIsConfirmed = MP_ConfirmChange();
+
+                if (productIsConfirmed)
+                {
+                    bool productIsUpdated = MP_UpdateProduct(productId, productQuantity, connector);
+
+                    if (productIsUpdated)
+                    {
+                        repeat = false;
+                        InterfaceHeader();
+                        Console.SetCursorPosition(0, 3);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 3);
+                        Console.WriteLine("Produto alterado com sucesso. Pressione ENTER para voltar ao menu.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        Console.SetCursorPosition(68, 3);
+                        Console.ReadKey();
+                    } else
+                    {
+                        Console.Clear();
+                        InterfaceHeader();
+                    }
+                }
             }
         }
 
