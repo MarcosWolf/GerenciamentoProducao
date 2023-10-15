@@ -11,6 +11,67 @@ using System.Xml;
 
 namespace GerenciamentoProducao
 {
+    public class SQLiteConnector
+    {
+        private SQLiteConnection? _connection;
+        public string? databasePath;
+
+        public SQLiteConnector()
+        {
+            _connection = null;
+            databasePath = null;
+        }
+
+        public void CreateConnection()
+        {
+            _connection = new SQLiteConnection(@"Data Source=C:\arquivo.db;Version=3;");
+        }
+
+        public void OpenConnection()
+        {
+            if (_connection != null && _connection.State != System.Data.ConnectionState.Open)
+            {
+                _connection.Open();
+            }
+        }
+
+        public void CloseConnection()
+        {
+            if (_connection != null && _connection.State != System.Data.ConnectionState.Closed)
+            {
+                _connection.Close();
+            }
+        }
+
+        public SQLiteConnection? GetConnection()
+        {
+            return _connection;
+        }
+
+        public void ExecuteQuery(string query)
+        {
+            try
+            {
+                OpenConnection();
+                if (_connection != null)
+                {
+                    var command = _connection.CreateCommand();
+                    command.CommandText = query;
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao execultar consulta: " + ex.Message);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+    }
+    
     internal class Program
     {
         public static string GetDate()
