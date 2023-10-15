@@ -24,7 +24,9 @@ namespace GerenciamentoProducao
 
         public void CreateConnection()
         {
-            _connection = new SQLiteConnection(@"Data Source=C:\arquivo.db;Version=3;");
+            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string databaseFilePath = Path.Combine(currentDirectory, "banco.db");
+            _connection = new SQLiteConnection(@"Data Source=" + databaseFilePath + ";Version=3;");
         }
 
         public void OpenConnection()
@@ -96,6 +98,43 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
             Console.WriteLine($"! Gerenciamento de Ordens de Produção                        | {currentDate} !");
             Console.WriteLine("+------------------------------------------------------------+------------+");
+        }
+
+        public static bool RO_RegisterOrder(int orderId, int orderQuantity, string orderDate, SQLiteConnector connector)
+        {
+            string query = "INSERT INTO [Order] (product_id, order_quantity, order_deliveryDate, order_status) VALUES (@ProductId, @OrderQuantity, @OrderDeliveryDate, 0)";
+
+            try
+            {
+                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                {
+                    command.Parameters.AddWithValue("@ProductId", orderId);
+                    command.Parameters.AddWithValue("@OrderQuantity", orderQuantity);
+                    command.Parameters.AddWithValue("OrderDeliveryDate", orderDate);
+                    connector.OpenConnection();
+
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao realizar consulta: " + ex);
+            }
+            finally
+            {
+                connector.CloseConnection();
+            }
+
+            return false;
         }
 
         public static bool RO_ConfirmOrder()
@@ -290,7 +329,6 @@ namespace GerenciamentoProducao
                                     {
                                         if (reader.Read())
                                         {
-                                            // Verificar se quantidade de estoque é insuficiente
                                             int materialQuantity = Convert.ToInt32(reader["product_quantity"]);
 
                                             if (materialQuantity < orderQuantity)
@@ -445,10 +483,20 @@ namespace GerenciamentoProducao
 
                 if (orderIsConfirmed)
                 {
-                    // Manda pro banco
-                    Console.WriteLine("Confirmado");
-                    Console.ReadKey();
-                    repeat = false;
+                    bool orderIsRegistered = RO_RegisterOrder(orderId, orderQuantity, orderDate, connector);
+
+                    if (orderIsRegistered)
+                    {
+                        repeat = false;
+                        InterfaceHeader();
+                        Console.SetCursorPosition(0, 3);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 3);
+                        Console.WriteLine("Ordem registrada com sucesso. Pressione ENTER para voltar ao menu.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        Console.SetCursorPosition(68, 3);
+                        Console.ReadKey();
+                    }
                 } else
                 {
                     Console.Clear();
@@ -485,8 +533,6 @@ namespace GerenciamentoProducao
                     }
                 }
             } while (repeat);
-
-            Console.ReadKey();
         }
 
         static void Main()

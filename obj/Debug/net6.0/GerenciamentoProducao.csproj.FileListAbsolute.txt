@@ -40,3 +40,4 @@ C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\obj\Debu
 C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\obj\Debug\net6.0\GerenciamentoProducao.pdb
 C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\obj\Debug\net6.0\GerenciamentoProducao.genruntimeconfig.cache
 C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\obj\Debug\net6.0\ref\GerenciamentoProducao.dll
+C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\bin\Debug\net6.0\banco.db
