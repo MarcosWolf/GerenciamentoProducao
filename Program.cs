@@ -74,6 +74,13 @@ namespace GerenciamentoProducao
 
     internal class Program
     {
+        public static void ClearCurrentConsoleLine(int left, int top)
+        {
+            Console.SetCursorPosition(left, top);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(left, top);
+        }
+
         public static string GetDate()
         {
             DateTime currentDate = DateTime.Now;
@@ -89,6 +96,95 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
             Console.WriteLine($"! Gerenciamento de Ordens de Produção                        | {currentDate} !");
             Console.WriteLine("+------------------------------------------------------------+------------+");
+        }
+
+        public static string RO_ValidateProductQuantity(SQLiteConnector connector, int orderId)
+        {
+            string? input = "";
+            int orderQuantity = 0;
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(14, 7);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 10);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 10);
+                        Console.WriteLine("A entrada não pode estar vazia.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                    }
+                    else if (!input.All(char.IsDigit))
+                    {
+                        Console.SetCursorPosition(0, 10);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 10);
+                        Console.WriteLine("A entrada deve conter apenas números.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                    }
+                    else
+                    {
+                        if (int.TryParse(input, out orderQuantity))
+                        {
+                            string query = "SELECT * FROM product WHERE product_id = @Id";
+
+                            try
+                            {
+                                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                                {
+                                    command.Parameters.AddWithValue("@Id", orderId);
+                                    connector.OpenConnection();
+
+                                    using (SQLiteDataReader reader = command.ExecuteReader())
+                                    {
+                                        if (reader.Read())
+                                        {
+                                            // Verificar se quantidade de estoque é insuficiente
+                                            int materialQuantity = Convert.ToInt32(reader["product_quantity"]);
+
+                                            if (materialQuantity < orderQuantity)
+                                            {
+                                                Console.SetCursorPosition(0, 10);
+                                                Console.WriteLine("|                                                                         |");
+                                                Console.SetCursorPosition(2, 10);
+                                                Console.WriteLine("Quantidade de materiais insuficientes.");
+                                                Console.WriteLine("+-------------------------------------------------------------------------+");
+                                                System.Threading.Thread.Sleep(1000);
+
+                                                Console.SetCursorPosition(0, 7);
+                                                Console.WriteLine("| Quantidade:                                                             |");
+                                                ClearCurrentConsoleLine(0, 10);
+                                                ClearCurrentConsoleLine(0, 11);
+                                                input = "";
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("Erro ao realizar consulta: " + ex);
+                            }
+                            finally
+                            {
+                                connector.CloseConnection();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida: " + ex);
+                }
+            }
+
+            return input;
         }
 
         public static string RO_ValidateProductInput(SQLiteConnector connector)
@@ -108,7 +204,7 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(0, 10);
                         Console.WriteLine("|                                                                         |");
                         Console.SetCursorPosition(2, 10);
-                        Console.WriteLine("O campo Nome não pode estar vazio.");
+                        Console.WriteLine("A entrada não pode estar vazia.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
                     }
                     else if (!input.All(char.IsDigit))
@@ -124,7 +220,7 @@ namespace GerenciamentoProducao
                     }
                     else
                     {
-                        if (input.All(char.IsDigit) && int.TryParse(input, out orderId))
+                        if (int.TryParse(input, out orderId))
                         {
                             string query = "SELECT * FROM Product WHERE product_id = @Id";
 
@@ -192,7 +288,8 @@ namespace GerenciamentoProducao
             Console.WriteLine("| Data de Entrega:                                                        |");
             Console.WriteLine("+-------------------------------------------------------------------------+");
 
-            RO_ValidateProductInput(connector);
+            int orderId = Convert.ToInt32(RO_ValidateProductInput(connector));
+            int orderQuantity = Convert.ToInt32(RO_ValidateProductQuantity(connector, orderId));
 
         }
 
