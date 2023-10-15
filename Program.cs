@@ -71,7 +71,7 @@ namespace GerenciamentoProducao
             }
         }
     }
-    
+
     internal class Program
     {
         public static string GetDate()
@@ -91,8 +91,42 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static void InterfaceManager(char menuChoice, SQLiteConnector connector)
+        {
+            string[] listArray = { "Registrar Ordem", "Listar Ordens", "Visualizar Relatório" };
+            int auxChoice = (int)Char.GetNumericValue(menuChoice);
+            bool repeat = false;
+
+            do
+            {
+                if (auxChoice >= 1 && auxChoice <= 3)
+                {
+                    InterfaceHeader();
+                    Console.Title = listArray[auxChoice - 1];
+
+                    try
+                    {
+                        if (auxChoice == 1)
+                        {
+                            //RegisterOrder(connector);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Erro");
+                        repeat = true;
+                    }
+                }
+            } while (repeat);
+
+            Console.ReadKey();
+        }
+
         static void Main()
         {
+            SQLiteConnector connector = new();
+            connector.CreateConnection();
+
             do
             {
                 Console.Title = "Menu Principal";
