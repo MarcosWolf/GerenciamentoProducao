@@ -102,6 +102,75 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static string MP_ValidateProductQuantity()
+        {
+            string? input = "";
+            int productQuantity = 0;
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(29, 7);
+                    input = Console.ReadLine();
+
+                    if (input == null & string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 9);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 9);
+                        Console.WriteLine("A entrada não pode estar vazia.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 9);
+                        ClearCurrentConsoleLine(0, 10);
+                    }
+                    else if (!input.All(char.IsDigit))
+                    {
+                        Console.SetCursorPosition(0, 9);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 9);
+                        Console.WriteLine("A entrada deve conter apenas números.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        input = "";
+                        System.Threading.Thread.Sleep(1000);
+                        Console.SetCursorPosition(0, 7);
+                        Console.WriteLine("| Quantidade para adicionar:                                                             |");
+                        ClearCurrentConsoleLine(0, 9);
+                        ClearCurrentConsoleLine(0, 10);
+                    }
+                    else
+                    {
+                        if (int.TryParse(input, out productQuantity))
+                        {
+                            if (productQuantity == 0)
+                            {
+                                Console.SetCursorPosition(0, 9);
+                                Console.WriteLine("|                                                                         |");
+                                Console.SetCursorPosition(2, 9);
+                                Console.WriteLine("A quantidade não pode ser 0.");
+                                Console.WriteLine("+-------------------------------------------------------------------------+");
+                                System.Threading.Thread.Sleep(1000);
+                                Console.SetCursorPosition(0, 7);
+                                Console.WriteLine("| Quantidade para adicionar:                                                             |");
+                                ClearCurrentConsoleLine(0, 9);
+                                ClearCurrentConsoleLine(0, 9);
+                                input = "";
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação válida: " + ex);
+                }
+            }
+
+            return input;
+        }
+
         public static string MP_ValidateProductInput(SQLiteConnector connector)
         {
             string? input = "";
@@ -205,7 +274,8 @@ namespace GerenciamentoProducao
                 Console.WriteLine("| Quantidade para adicionar:                                              |");
                 Console.WriteLine("+-------------------------------------------------------------------------+");
 
-                int orderId = Convert.ToInt32(MP_ValidateProductInput(connector));
+                int productId = Convert.ToInt32(MP_ValidateProductInput(connector));
+                int productQuantity = Convert.ToInt32(MP_ValidateProductQuantity());
             }
         }
 
