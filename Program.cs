@@ -102,6 +102,58 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static string RP_ValidateProductName(SQLiteConnector connector)
+        {
+            string? input = "";
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(19, 5);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 8);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 8);
+                        Console.WriteLine("A entrada não pode estar vazia.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 8);
+                        ClearCurrentConsoleLine(0, 9);
+                        input = "";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida: " + ex);
+                }
+            }
+
+            return input;
+        }
+
+        public static void RegisterProduct(SQLiteConnector connector)
+        {
+            bool repeat = true;
+
+            while (repeat)
+            {
+
+                Console.WriteLine("! Cadastrar Produto                                                       !");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+                Console.WriteLine("| Nome do Produto:                                                        |");
+                Console.WriteLine("| Quantidade Inicial:                                                     |");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                string productName = RP_ValidateProductName(connector);
+            }
+        }
+
         public static bool RO_RemoveMaterial(int productId, int orderQuantity, SQLiteConnector connector)
         {
             string query = @"UPDATE Product SET product_quantity = product_quantity - @OrderQuantity WHERE product_id = @ProductId";
@@ -598,12 +650,13 @@ namespace GerenciamentoProducao
                         InterfaceHeader();
                         Console.WriteLine("| 1 - Registrar Ordem                                                     |");
                         Console.WriteLine("| 2 - Listar Ordens                                                       |");
-                        Console.WriteLine("| 3 - Visualizar Relatório                                                |");
+                        Console.WriteLine("| 3 - Cadastrar Produto                                                   |");
+                        Console.WriteLine("| 4 - Gerenciar Materiais                                                 |");
                         Console.WriteLine("| 0 - Sair                                                                |");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
                         Console.WriteLine("! Selecione uma opção:                                                    !");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
-                        Console.SetCursorPosition(23, 8);
+                        Console.SetCursorPosition(23, 9);
                         char keyPressed = Console.ReadKey().KeyChar;
 
                         if (keyPressed == '0')
@@ -616,8 +669,10 @@ namespace GerenciamentoProducao
                         } else if (keyPressed == '2')
                         {
                             currentState = 2;
+                        } else if (keyPressed == '3')
+                        {
+                            currentState = 3;
                         }
-
                         break;
 
                     case 1: // Registrar Ordem
@@ -629,6 +684,12 @@ namespace GerenciamentoProducao
                     case 2: // Listar Ordens
                         InterfaceHeader();
                         //ListOrders(connector);
+                        currentState = 0;
+                        break;
+
+                    case 3: // Cadastrar Produto
+                        InterfaceHeader();
+                        RegisterProduct(connector);
                         currentState = 0;
                         break;
 
