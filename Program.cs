@@ -102,6 +102,113 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static string MP_ValidateProductInput(SQLiteConnector connector)
+        {
+            string? input = "";
+            int productId = 0;
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(11, 5);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 9);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 9);
+                        Console.WriteLine("A entrada não pode estar vazia.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                    }
+                    else if (!input.All(char.IsDigit))
+                    {
+                        Console.SetCursorPosition(0, 9);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 9);
+                        Console.WriteLine("A entrada deve conter apenas números.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        input = "";
+                        Console.SetCursorPosition(0, 5);
+                        Console.WriteLine("| Produto:                                                                |");
+                        //MEXER
+                    }
+                    else
+                    {
+                        if (int.TryParse(input, out productId))
+                        {
+                            string query = "SELECT * FROM Product WHERE product_id = @Id";
+
+                            try
+                            {
+                                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                                {
+                                    command.Parameters.AddWithValue("@Id", productId);
+                                    connector.OpenConnection();
+
+                                    using (SQLiteDataReader reader = command.ExecuteReader())
+                                    {
+                                        if (reader.Read())
+                                        {
+                                            Console.SetCursorPosition(2, 6);
+                                            Console.WriteLine(reader["product_name"] + " (Qtd disponível: " + reader["product_quantity"] + ")");
+                                        }
+                                        else
+                                        {
+                                            Console.SetCursorPosition(2, 6);
+                                            Console.WriteLine("Nenhum Produto Encontrado.");
+                                            System.Threading.Thread.Sleep(1000);
+
+                                            Console.SetCursorPosition(0, 5);
+                                            Console.WriteLine("| Produto:                                                                |");
+                                            Console.SetCursorPosition(0, 6);
+                                            Console.WriteLine("|                                                                         |");
+
+                                            input = "";
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("Erro ao realizar consulta: " + ex);
+                            }
+                            finally
+                            {
+                                connector.CloseConnection();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida:" + ex);
+                }
+            }
+
+            return input;
+        }
+
+        public static void ManageProduct(SQLiteConnector connector)
+        {
+            bool repeat = true;
+
+            while (repeat)
+            {
+                Console.WriteLine("! Gerenciar Produto                                                       !");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+                Console.WriteLine("| Produto:                                                                |");
+                Console.WriteLine("|                                                                         |");
+                Console.WriteLine("| Quantidade para adicionar:                                              |");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                int orderId = Convert.ToInt32(MP_ValidateProductInput(connector));
+            }
+        }
+
         public static bool RP_RegisterProduct(string productName, int productQuantity, SQLiteConnector connector)
         {
             string query = "INSERT INTO [Product] (product_name, product_quantity) VALUES (@ProductName, @ProductQuantity)";
@@ -870,6 +977,9 @@ namespace GerenciamentoProducao
                         } else if (keyPressed == '3')
                         {
                             currentState = 3;
+                        } else if (keyPressed == '4')
+                        {
+                            currentState = 4;
                         }
                         break;
 
@@ -888,6 +998,12 @@ namespace GerenciamentoProducao
                     case 3: // Cadastrar Produto
                         InterfaceHeader();
                         RegisterProduct(connector);
+                        currentState = 0;
+                        break;
+
+                    case 4: // Gerenciar Materiais
+                        InterfaceHeader();
+                        ManageProduct(connector);
                         currentState = 0;
                         break;
 
