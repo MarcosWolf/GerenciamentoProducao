@@ -98,6 +98,72 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static bool RO_ConfirmOrder()
+        {
+            string? input = "";
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(0, 10);
+                    Console.WriteLine("|                                                                         |");
+                    Console.SetCursorPosition(2, 10);
+                    Console.WriteLine("Deseja confirmar a entrada? (S/N):");
+                    Console.WriteLine("+-------------------------------------------------------------------------+");
+                    Console.SetCursorPosition(37, 10);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 12);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 12);
+                        Console.WriteLine("Confirmação inválida.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 12);
+                        ClearCurrentConsoleLine(0, 13);
+                        input = "";
+                    }
+                    else
+                    {
+                        input = input.Trim().ToUpper();
+
+                        if (input != "S" && input != "N")
+                        {
+                            Console.SetCursorPosition(0, 12);
+                            Console.WriteLine("|                                                                         |");
+                            Console.SetCursorPosition(2, 12);
+                            Console.WriteLine("Confirmação inválida.");
+                            Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                            System.Threading.Thread.Sleep(1000);
+                            ClearCurrentConsoleLine(0, 12);
+                            ClearCurrentConsoleLine(0, 13);
+                            input = "";
+                        }
+                        else if (input == "S")
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida: " + ex);
+                }
+            }
+
+            return false;
+        }
+
         public static string RO_ValidateProductDate()
         {
             string? input = "";
@@ -359,19 +425,36 @@ namespace GerenciamentoProducao
 
         public static void RegisterOrder(SQLiteConnector connector)
         {
-            bool repeat = false;
+            bool repeat = true;
 
-            Console.WriteLine("! Registrar Ordem                                                         !");
-            Console.WriteLine("+-------------------------------------------------------------------------+");
-            Console.WriteLine("| Produto:                                                                |");
-            Console.WriteLine("|                                                                         |");
-            Console.WriteLine("| Quantidade:                                                             |");
-            Console.WriteLine("| Data de Entrega:                                                        |");
-            Console.WriteLine("+-------------------------------------------------------------------------+");
+            while (repeat)
+            {
+                
+                Console.WriteLine("! Registrar Ordem                                                         !");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+                Console.WriteLine("| Produto:                                                                |");
+                Console.WriteLine("|                                                                         |");
+                Console.WriteLine("| Quantidade:                                                             |");
+                Console.WriteLine("| Data de Entrega:                                                        |");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
 
-            int orderId = Convert.ToInt32(RO_ValidateProductInput(connector));
-            int orderQuantity = Convert.ToInt32(RO_ValidateProductQuantity(connector, orderId));
-            string orderDate = RO_ValidateProductDate();
+                int orderId = Convert.ToInt32(RO_ValidateProductInput(connector));
+                int orderQuantity = Convert.ToInt32(RO_ValidateProductQuantity(connector, orderId));
+                string orderDate = RO_ValidateProductDate();
+                bool orderIsConfirmed = RO_ConfirmOrder();
+
+                if (orderIsConfirmed)
+                {
+                    // Manda pro banco
+                    Console.WriteLine("Confirmado");
+                    Console.ReadKey();
+                    repeat = false;
+                } else
+                {
+                    Console.Clear();
+                    InterfaceHeader();
+                }
+            }
 
         }
 
