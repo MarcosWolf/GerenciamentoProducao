@@ -100,6 +100,42 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static bool RO_RemoveMaterial(int productId, int orderQuantity, SQLiteConnector connector)
+        {
+            string query = @"UPDATE Product SET product_quantity = product_quantity - @OrderQuantity WHERE product_id = @ProductId";
+
+            try
+            {
+                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                {
+                    command.Parameters.AddWithValue("OrderQuantity", orderQuantity);
+                    command.Parameters.AddWithValue("ProductId", productId);
+                    
+                    connector.OpenConnection();
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao realizar consulta: " + ex);
+            }
+            finally
+            {
+                connector.CloseConnection();
+            }
+
+            return false;
+        }
+
         public static bool RO_RegisterOrder(int orderId, int orderQuantity, string orderDate, SQLiteConnector connector)
         {
             string query = "INSERT INTO [Order] (product_id, order_quantity, order_deliveryDate, order_status) VALUES (@ProductId, @OrderQuantity, @OrderDeliveryDate, 0)";
@@ -117,7 +153,14 @@ namespace GerenciamentoProducao
 
                     if (rowsAffected > 0)
                     {
-                        return true;
+                        bool isMaterialRemoved = RO_RemoveMaterial(orderId, orderQuantity, connector);
+
+                        if (isMaterialRemoved) {
+                            return true;
+                        } else
+                        {
+                            return false;
+                        }
                     } else
                     {
                         return false;
