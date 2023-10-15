@@ -76,6 +76,8 @@ namespace GerenciamentoProducao
 
     internal class Program
     {
+        private static bool running = true;
+
         public static void ClearCurrentConsoleLine(int left, int top)
         {
             Console.SetCursorPosition(left, top);
@@ -93,8 +95,8 @@ namespace GerenciamentoProducao
         public static void InterfaceHeader()
         {
             string currentDate = GetDate();
-
             Console.Clear();
+            Console.SetCursorPosition(0, 0);
             Console.WriteLine("+------------------------------------------------------------+------------+");
             Console.WriteLine($"! Gerenciamento de Ordens de Produção                        | {currentDate} !");
             Console.WriteLine("+------------------------------------------------------------+------------+");
@@ -271,7 +273,6 @@ namespace GerenciamentoProducao
                     }
                     else
                     {
-                        // Verificar se a data está válida
                         if (DateTime.TryParseExact(input, "dd/MM/yyyy", null, DateTimeStyles.None, out DateTime orderDate))
                         {
                             if (orderDate.Date < DateTime.Today)
@@ -336,7 +337,7 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(2, 10);
                         Console.WriteLine("A entrada não pode estar vazia.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
-                        
+
                         System.Threading.Thread.Sleep(1000);
                         ClearCurrentConsoleLine(0, 10);
                         ClearCurrentConsoleLine(0, 11);
@@ -359,48 +360,65 @@ namespace GerenciamentoProducao
                     {
                         if (int.TryParse(input, out orderQuantity))
                         {
-                            string query = "SELECT * FROM product WHERE product_id = @Id";
-
-                            try
+                            if (orderQuantity == 0)
                             {
-                                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                                Console.SetCursorPosition(0, 10);
+                                Console.WriteLine("|                                                                         |");
+                                Console.SetCursorPosition(2, 10);
+                                Console.WriteLine("A quantidade não pode ser 0.");
+                                Console.WriteLine("+-------------------------------------------------------------------------+");
+                                System.Threading.Thread.Sleep(1000);
+                                Console.SetCursorPosition(0, 7);
+                                Console.WriteLine("| Quantidade:                                                             |");
+                                ClearCurrentConsoleLine(0, 10);
+                                ClearCurrentConsoleLine(0, 11);
+                                input = "";
+                            }
+                            else
+                            {
+                                string query = "SELECT * FROM product WHERE product_id = @Id";
+
+                                try
                                 {
-                                    command.Parameters.AddWithValue("@Id", orderId);
-                                    connector.OpenConnection();
-
-                                    using (SQLiteDataReader reader = command.ExecuteReader())
+                                    using (var command = new SQLiteCommand(query, connector.GetConnection()))
                                     {
-                                        if (reader.Read())
+                                        command.Parameters.AddWithValue("@Id", orderId);
+                                        connector.OpenConnection();
+
+                                        using (SQLiteDataReader reader = command.ExecuteReader())
                                         {
-                                            int materialQuantity = Convert.ToInt32(reader["product_quantity"]);
-
-                                            if (materialQuantity < orderQuantity)
+                                            if (reader.Read())
                                             {
-                                                Console.SetCursorPosition(0, 10);
-                                                Console.WriteLine("|                                                                         |");
-                                                Console.SetCursorPosition(2, 10);
-                                                Console.WriteLine("Quantidade de materiais insuficientes.");
-                                                Console.WriteLine("+-------------------------------------------------------------------------+");
-                                                System.Threading.Thread.Sleep(1000);
+                                                int materialQuantity = Convert.ToInt32(reader["product_quantity"]);
 
-                                                Console.SetCursorPosition(0, 7);
-                                                Console.WriteLine("| Quantidade:                                                             |");
-                                                ClearCurrentConsoleLine(0, 10);
-                                                ClearCurrentConsoleLine(0, 11);
-                                                input = "";
+                                                if (materialQuantity < orderQuantity)
+                                                {
+                                                    Console.SetCursorPosition(0, 10);
+                                                    Console.WriteLine("|                                                                         |");
+                                                    Console.SetCursorPosition(2, 10);
+                                                    Console.WriteLine("Quantidade de materiais insuficientes.");
+                                                    Console.WriteLine("+-------------------------------------------------------------------------+");
+                                                    System.Threading.Thread.Sleep(1000);
+
+                                                    Console.SetCursorPosition(0, 7);
+                                                    Console.WriteLine("| Quantidade:                                                             |");
+                                                    ClearCurrentConsoleLine(0, 10);
+                                                    ClearCurrentConsoleLine(0, 11);
+                                                    input = "";
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.Clear();
-                                Console.WriteLine("Erro ao realizar consulta: " + ex);
-                            }
-                            finally
-                            {
-                                connector.CloseConnection();
+                                catch (Exception ex)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("Erro ao realizar consulta: " + ex);
+                                }
+                                finally
+                                {
+                                    connector.CloseConnection();
+                                }
                             }
                         }
                     }
@@ -546,58 +564,63 @@ namespace GerenciamentoProducao
                     InterfaceHeader();
                 }
             }
-
-        }
-
-            public static void InterfaceManager(char menuChoice, SQLiteConnector connector)
-        {
-            string[] listArray = { "Registrar Ordem", "Listar Ordens", "Visualizar Relatório" };
-            int auxChoice = (int)Char.GetNumericValue(menuChoice);
-            bool repeat = false;
-
-            do
-            {
-                if (auxChoice >= 1 && auxChoice <= 3)
-                {
-                    InterfaceHeader();
-                    Console.Title = listArray[auxChoice - 1];
-
-                    try
-                    {
-                        if (auxChoice == 1)
-                        {
-                            RegisterOrder(connector);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("Erro");
-                        repeat = true;
-                    }
-                }
-            } while (repeat);
         }
 
         static void Main()
         {
             SQLiteConnector connector = new();
             connector.CreateConnection();
+            bool running = true;
+            int currentState = 0;
 
-            do
+            while (running)
             {
-                Console.Title = "Menu Principal";
-                InterfaceHeader();
-                Console.WriteLine("| 1 - Registrar Ordem                                                     |");
-                Console.WriteLine("| 2 - Listar Ordens                                                       |");
-                Console.WriteLine("| 3 - Visualizar Relatório                                                |");
-                Console.WriteLine("| 0 - Sair                                                                |");
-                Console.WriteLine("+-------------------------------------------------------------------------+");
-                Console.WriteLine("! Selecione uma opção:                                                    !");
-                Console.WriteLine("+-------------------------------------------------------------------------+");
-                Console.SetCursorPosition(23, 8);
+                switch (currentState)
+                {
+                    case 0: // Menu principal
+                        Console.Title = "Menu Principal";
+                        InterfaceHeader();
+                        Console.WriteLine("| 1 - Registrar Ordem                                                     |");
+                        Console.WriteLine("| 2 - Listar Ordens                                                       |");
+                        Console.WriteLine("| 3 - Visualizar Relatório                                                |");
+                        Console.WriteLine("| 0 - Sair                                                                |");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        Console.WriteLine("! Selecione uma opção:                                                    !");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        Console.SetCursorPosition(23, 8);
+                        char keyPressed = Console.ReadKey().KeyChar;
 
-                InterfaceManager(Console.ReadKey().KeyChar, connector);
-            } while (true);
+                        if (keyPressed == '0')
+                        {
+                            running = false;
+                        }
+                        else if (keyPressed == '1')
+                        {
+                            currentState = 1;
+                        } else if (keyPressed == '2')
+                        {
+                            currentState = 2;
+                        }
+
+                        break;
+
+                    case 1: // Registrar Ordem
+                        InterfaceHeader();
+                        RegisterOrder(connector);
+                        currentState = 0;
+                        break;
+
+                    case 2: // Listar Ordens
+                        InterfaceHeader();
+                        //ListOrders(connector);
+                        currentState = 0;
+                        break;
+
+                    default:
+                        break;
+                }
+
+            }
         }
     }
 }
