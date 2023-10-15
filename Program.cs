@@ -91,7 +91,112 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
-        public static void InterfaceManager(char menuChoice, SQLiteConnector connector)
+        public static string RO_ValidateProductInput(SQLiteConnector connector)
+        {
+            string? input = "";
+            int orderId = 0;
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(11, 5);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 10);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 10);
+                        Console.WriteLine("O campo Nome não pode estar vazio.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                    }
+                    else if (!input.All(char.IsDigit))
+                    {
+                        Console.SetCursorPosition(0, 10);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 10);
+                        Console.WriteLine("A entrada deve conter apenas números.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        input = "";
+                        Console.SetCursorPosition(0, 5);
+                        Console.WriteLine("| Produto:                                                                |");
+                    }
+                    else
+                    {
+                        if (input.All(char.IsDigit) && int.TryParse(input, out orderId))
+                        {
+                            string query = "SELECT * FROM Product WHERE product_id = @Id";
+
+                            try
+                            {
+                                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                                {
+                                    command.Parameters.AddWithValue("@Id", orderId);
+                                    connector.OpenConnection();
+
+                                    using (SQLiteDataReader reader = command.ExecuteReader())
+                                    {
+                                        if (reader.Read())
+                                        {
+                                            Console.SetCursorPosition(2, 6);
+                                            Console.WriteLine(reader["product_name"] + " (Qtd disponível: " + reader["product_quantity"] + ")");
+                                        }
+                                        else
+                                        {
+                                            Console.SetCursorPosition(2, 6);
+                                            Console.WriteLine("Nenhum Produto Encontrado.");
+                                            System.Threading.Thread.Sleep(1000);
+
+                                            Console.SetCursorPosition(0, 5);
+                                            Console.WriteLine("| Produto:                                                                |");
+                                            Console.SetCursorPosition(0, 6);
+                                            Console.WriteLine("|                                                                         |");
+
+                                            input = "";
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("Erro ao realizar consulta: " + ex);
+                            }
+                            finally
+                            {
+                                connector.CloseConnection();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida: " + ex);
+                }
+            }
+
+            return input;
+        }
+
+        public static void RegisterOrder(SQLiteConnector connector)
+        {
+            bool repeat = false;
+
+            Console.WriteLine("! Registrar Ordem                                                         !");
+            Console.WriteLine("+-------------------------------------------------------------------------+");
+            Console.WriteLine("| Produto:                                                                |");
+            Console.WriteLine("|                                                                         |");
+            Console.WriteLine("| Quantidade:                                                             |");
+            Console.WriteLine("| Data de Entrega:                                                        |");
+            Console.WriteLine("+-------------------------------------------------------------------------+");
+
+            RO_ValidateProductInput(connector);
+
+        }
+
+            public static void InterfaceManager(char menuChoice, SQLiteConnector connector)
         {
             string[] listArray = { "Registrar Ordem", "Listar Ordens", "Visualizar Relatório" };
             int auxChoice = (int)Char.GetNumericValue(menuChoice);
@@ -108,7 +213,7 @@ namespace GerenciamentoProducao
                     {
                         if (auxChoice == 1)
                         {
-                            //RegisterOrder(connector);
+                            RegisterOrder(connector);
                         }
                     }
                     catch (Exception)
@@ -140,6 +245,7 @@ namespace GerenciamentoProducao
                 Console.WriteLine("+-------------------------------------------------------------------------+");
                 Console.SetCursorPosition(23, 8);
 
+                InterfaceManager(Console.ReadKey().KeyChar, connector);
             } while (true);
         }
     }
