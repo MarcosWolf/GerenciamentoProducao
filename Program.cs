@@ -102,7 +102,77 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
-        public static string RP_ValidateProductName(SQLiteConnector connector)
+        public static string RP_ValidateProductQuantity()
+        {
+            string? input = "";
+            int productQuantity = 0;
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(22, 6);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 8);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 8);
+                        Console.WriteLine("A entrada não pode estar vazia.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 8);
+                        ClearCurrentConsoleLine(0, 9);
+                        input = "";
+                    }
+                    else if (!input.All(char.IsDigit))
+                    {
+                        Console.SetCursorPosition(0, 8);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 8);
+                        Console.WriteLine("A entrada deve conter apenas números.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        input = "";
+                        System.Threading.Thread.Sleep(1000);
+                        Console.SetCursorPosition(0, 6);
+                        Console.WriteLine("| Quantidade Inicial:                                                     |");
+                        ClearCurrentConsoleLine(0, 8);
+                        ClearCurrentConsoleLine(0, 9);
+                    }
+                    else
+                    {
+                        if (int.TryParse(input, out productQuantity))
+                        {
+                            if (productQuantity == 0)
+                            {
+                                Console.SetCursorPosition(0, 8);
+                                Console.WriteLine("|                                                                         |");
+                                Console.SetCursorPosition(2, 8);
+                                Console.WriteLine("A quantidade não pode ser 0.");
+                                Console.WriteLine("+-------------------------------------------------------------------------+");
+                                input = "";
+                                System.Threading.Thread.Sleep(1000);
+                                Console.SetCursorPosition(0, 6);
+                                Console.WriteLine("| Quantidade Inicial:                                                     |");
+                                ClearCurrentConsoleLine(0, 8);
+                                ClearCurrentConsoleLine(0, 9);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida: " + ex);
+                }
+            }
+
+            return input;
+        }
+
+        public static string RP_ValidateProductName()
         {
             string? input = "";
 
@@ -150,7 +220,9 @@ namespace GerenciamentoProducao
                 Console.WriteLine("| Quantidade Inicial:                                                     |");
                 Console.WriteLine("+-------------------------------------------------------------------------+");
 
-                string productName = RP_ValidateProductName(connector);
+                string productName = RP_ValidateProductName();
+                int productQuantity = Convert.ToInt32(RP_ValidateProductQuantity());
+                bool productIsConfirmed = RP_ConfirmRegister();
             }
         }
 
@@ -515,6 +587,7 @@ namespace GerenciamentoProducao
                         input = "";
                         Console.SetCursorPosition(0, 5);
                         Console.WriteLine("| Produto:                                                                |");
+                        // Colocar timer e remover aviso
                     }
                     else
                     {
