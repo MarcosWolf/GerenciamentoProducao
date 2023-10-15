@@ -102,6 +102,109 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static bool RP_RegisterProduct(string productName, int productQuantity, SQLiteConnector connector)
+        {
+            string query = "INSERT INTO [Product] (product_name, product_quantity) VALUES (@ProductName, @ProductQuantity)";
+
+            try
+            {
+                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                {
+                    command.Parameters.AddWithValue("@ProductName", productName);
+                    command.Parameters.AddWithValue("@ProductQuantity", productQuantity);
+                    connector.OpenConnection();
+
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao realizar consulta: " + ex);
+            }
+            finally
+            {
+                connector.CloseConnection();
+            }
+
+            return false;
+        }
+
+        public static bool RP_ConfirmRegister()
+        {
+            string? input = "";
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(0, 8);
+                    Console.WriteLine("|                                                                         |");
+                    Console.SetCursorPosition(2, 8);
+                    Console.WriteLine("Deseja confirmar a entrada? (S/N):");
+                    Console.WriteLine("+-------------------------------------------------------------------------+");
+                    Console.SetCursorPosition(37, 8);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 10);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 10);
+                        Console.WriteLine("Confirmação inválida.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 10);
+                        ClearCurrentConsoleLine(0, 11);
+                        input = "";
+                    }
+                    else
+                    {
+                        input = input.Trim().ToUpper();
+
+                        if (input != "S" && input != "N")
+                        {
+                            Console.SetCursorPosition(0, 10);
+                            Console.WriteLine("|                                                                         |");
+                            Console.SetCursorPosition(2, 10);
+                            Console.WriteLine("Confirmação inválida.");
+                            Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                            System.Threading.Thread.Sleep(1000);
+                            ClearCurrentConsoleLine(0, 10);
+                            ClearCurrentConsoleLine(0, 11);
+                            input = "";
+                        }
+                        else if (input == "S")
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida:" + ex);
+                }
+            }
+
+
+            return false;
+        }
+
         public static string RP_ValidateProductQuantity()
         {
             string? input = "";
@@ -223,6 +326,28 @@ namespace GerenciamentoProducao
                 string productName = RP_ValidateProductName();
                 int productQuantity = Convert.ToInt32(RP_ValidateProductQuantity());
                 bool productIsConfirmed = RP_ConfirmRegister();
+
+                if (productIsConfirmed)
+                {
+                    bool productIsRegistered = RP_RegisterProduct(productName, productQuantity, connector);
+
+                    if (productIsRegistered)
+                    {
+                        repeat = false;
+                        InterfaceHeader();
+                        Console.SetCursorPosition(0, 3);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 3);
+                        Console.WriteLine("Produto registrado com sucesso. Pressione ENTER para voltar ao menu.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        Console.SetCursorPosition(70, 3);
+                        Console.ReadKey();
+                    }
+                } else
+                {
+                    Console.Clear();
+                    InterfaceHeader();
+                }
             }
         }
 
