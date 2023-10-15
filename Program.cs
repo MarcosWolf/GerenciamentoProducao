@@ -481,8 +481,24 @@ namespace GerenciamentoProducao
                                     {
                                         if (reader.Read())
                                         {
-                                            Console.SetCursorPosition(2, 6);
-                                            Console.WriteLine(reader["product_name"] + " (Qtd disponível: " + reader["product_quantity"] + ")");
+                                            if (Convert.ToInt32(reader["product_quantity"]) <= 0)
+                                            {
+                                                Console.SetCursorPosition(2, 6);
+                                                Console.WriteLine(reader["product_name"] + " (Materiais Indisponíveis)");
+                                                System.Threading.Thread.Sleep(1000);
+
+                                                Console.SetCursorPosition(0, 5);
+                                                Console.WriteLine("| Produto:                                                                |");
+                                                Console.SetCursorPosition(0, 6);
+                                                Console.WriteLine("|                                                                         |");
+
+                                                input = "";
+                                            }
+                                            else
+                                            {
+                                                Console.SetCursorPosition(2, 6);
+                                                Console.WriteLine(reader["product_name"] + " (Qtd disponível: " + reader["product_quantity"] + ")");
+                                            }
                                         }
                                         else
                                         {
