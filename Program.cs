@@ -98,6 +98,77 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static string RO_ValidateProductDate()
+        {
+            string? input = "";
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(19, 8);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 10);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 10);
+                        Console.WriteLine("A entrada não pode estar vazia.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 10);
+                        ClearCurrentConsoleLine(0, 11);
+                    }
+                    else
+                    {
+                        // Verificar se a data está válida
+                        if (DateTime.TryParseExact(input, "dd/MM/yyyy", null, DateTimeStyles.None, out DateTime orderDate))
+                        {
+                            if (orderDate.Date < DateTime.Today)
+                            {
+                                Console.SetCursorPosition(0, 10);
+                                Console.WriteLine("|                                                                         |");
+                                Console.SetCursorPosition(2, 10);
+                                Console.WriteLine("A Data de entrega está inválida.");
+                                Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                                System.Threading.Thread.Sleep(1000);
+                                Console.SetCursorPosition(0, 8);
+                                Console.WriteLine("| Data de Entrega:                                                        |");
+                                ClearCurrentConsoleLine(0, 10);
+                                ClearCurrentConsoleLine(0, 11);
+                                input = "";
+                            }
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(0, 10);
+                            Console.WriteLine("|                                                                         |");
+                            Console.SetCursorPosition(2, 10);
+                            Console.WriteLine("A Data de entrega está inválida.");
+                            Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                            System.Threading.Thread.Sleep(1000);
+                            Console.SetCursorPosition(0, 8);
+                            Console.WriteLine("| Data de Entrega:                                                        |");
+                            ClearCurrentConsoleLine(0, 10);
+                            ClearCurrentConsoleLine(0, 11);
+                            input = "";
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida: " + ex);
+                }
+            }
+
+            return input;
+        }
+
         public static string RO_ValidateProductQuantity(SQLiteConnector connector, int orderId)
         {
             string? input = "";
@@ -117,6 +188,10 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(2, 10);
                         Console.WriteLine("A entrada não pode estar vazia.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
+                        
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 10);
+                        ClearCurrentConsoleLine(0, 11);
                     }
                     else if (!input.All(char.IsDigit))
                     {
@@ -125,6 +200,12 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(2, 10);
                         Console.WriteLine("A entrada deve conter apenas números.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
+                        input = "";
+                        System.Threading.Thread.Sleep(1000);
+                        Console.SetCursorPosition(0, 7);
+                        Console.WriteLine("| Quantidade:                                                             |");
+                        ClearCurrentConsoleLine(0, 10);
+                        ClearCurrentConsoleLine(0, 11);
                     }
                     else
                     {
@@ -290,6 +371,7 @@ namespace GerenciamentoProducao
 
             int orderId = Convert.ToInt32(RO_ValidateProductInput(connector));
             int orderQuantity = Convert.ToInt32(RO_ValidateProductQuantity(connector, orderId));
+            string orderDate = RO_ValidateProductDate();
 
         }
 
