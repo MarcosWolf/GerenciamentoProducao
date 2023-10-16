@@ -1,5 +1,7 @@
 ﻿using System.Data.SQLite;
 using System.Globalization;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
 
 namespace GerenciamentoProducao
 {
@@ -1009,6 +1011,95 @@ namespace GerenciamentoProducao
             
             return false;
         }
+        public static List<string> LO_FetchOrders(SQLiteConnector connector, int orderType)
+        {
+            List<string> orders = new List<string>();
+
+            string query = "SELECT o.*, p.product_name FROM [Order] o INNER JOIN Product p ON o.product_id = p.product_id WHERE o.order_status = @OrderType";
+
+            using (var command = new SQLiteCommand(query, connector.GetConnection()))
+            {
+                command.Parameters.AddWithValue("@OrderType", orderType);
+                connector.OpenConnection();
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string orderDetails = $"{reader["order_id"]}: {reader["product_name"]} - {reader["order_quantity"]} und ({reader["order_deliveryDate"]})";
+                        orders.Add(orderDetails);
+                    }
+                }
+
+                connector.CloseConnection();
+            }
+
+            return orders;
+        }
+
+        public static bool LO_GeneratePDF(SQLiteConnector connector)
+        {
+            List<string> ordersInProgress = LO_FetchOrders(connector, 0);
+            List<string> completedOrders = LO_FetchOrders(connector, 1);
+
+            using (PdfDocument document = new PdfDocument())
+            {
+                PdfPage page = document.AddPage();
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+                XFont font = new XFont("Verdana", 20, XFontStyle.BoldItalic);
+                XFont titleFont = new XFont("Arial", 16, XFontStyle.Bold);
+                XFont subtitleFont = new XFont("Arial", 12, XFontStyle.Bold);
+                XFont paragraphFont = new XFont("Arial", 10, XFontStyle.Regular);
+
+                // Título
+                gfx.DrawString("Relatório de Ordens - " + GetDate(), titleFont, XBrushes.Black,
+                    new XRect(0, 0, page.Width, 100),
+                    XStringFormats.Center);
+
+                // Seção de Ordens em Andamento
+                gfx.DrawString("Ordens em Andamento (" + ordersInProgress.Count + ")", subtitleFont, XBrushes.Black,
+                    new XRect(0, 30, page.Width, 100),
+                    XStringFormats.Center);
+
+                int currentY = 100;
+
+                // Adicionando detalhes das Ordens em Andamento
+                foreach (string order in ordersInProgress)
+                {
+                    gfx.DrawString(order, paragraphFont, XBrushes.Black,
+                        new XRect(50, currentY, page.Width - 100, page.Height - 100),
+                        XStringFormats.TopLeft);
+                    currentY += 20;
+                }
+
+                PdfPage page2 = document.AddPage();
+                XGraphics gfx2 = XGraphics.FromPdfPage(page2);
+
+                gfx2.DrawString("Relatório de Ordens - " + GetDate(), titleFont, XBrushes.Black,
+            new XRect(0, 0, page2.Width, 100),
+            XStringFormats.Center);
+
+                gfx2.DrawString("Ordens Concluídas (27)", subtitleFont, XBrushes.Black,
+                    new XRect(0, 30, page2.Width, 100),
+                    XStringFormats.Center);
+
+                currentY = 100;
+
+                // Adicionando detalhes das Ordens em Andamento
+                foreach (string order in completedOrders)
+                {
+                    gfx2.DrawString(order, paragraphFont, XBrushes.Black,
+                        new XRect(50, currentY, page.Width - 100, page.Height - 100),
+                        XStringFormats.TopLeft);
+                    currentY += 20;
+                }
+
+                const string filename = "Report.pdf";
+                document.Save(filename);
+            }
+
+            return true;
+        }
 
         public static void ListOrders(SQLiteConnector connector)
         {
@@ -1024,11 +1115,12 @@ namespace GerenciamentoProducao
                         InterfaceHeader();
                         Console.WriteLine("| 1 - Ordens em andamento                                                 |");
                         Console.WriteLine("| 2 - Ordens concluídas                                                   |");
+                        Console.WriteLine("| 3 - Gerar Relatório PDF                                                 |");
                         Console.WriteLine("| 0 - Voltar                                                              |");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
                         Console.WriteLine("! Selecione uma opção:                                                    !");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
-                        Console.SetCursorPosition(23, 7);
+                        Console.SetCursorPosition(23, 8);
                         char keyPressed = Console.ReadKey().KeyChar;
 
                         if (keyPressed == '0')
@@ -1042,6 +1134,10 @@ namespace GerenciamentoProducao
                         else if (keyPressed == '2')
                         {
                             currentState = 2;
+                        }
+                        else if (keyPressed == '3')
+                        {
+                            currentState = 3;
                         }
                         break;
 
@@ -1060,6 +1156,12 @@ namespace GerenciamentoProducao
                     case 2: // Concluídas
                         InterfaceHeader();
                         LO_ShowOrders(1, connector);
+                        currentState = 0;
+                        break;
+
+                    case 3: // Relatório PDF
+                        InterfaceHeader();
+                        LO_GeneratePDF(connector);
                         currentState = 0;
                         break;
 
@@ -1621,7 +1723,7 @@ namespace GerenciamentoProducao
                         currentState = 0;
                         break;
 
-                    case 4: // Gerenciar Materiais
+                    case 4: // Gerenciar Produtos
                         InterfaceHeader();
                         ManageProduct(connector);
                         currentState = 0;

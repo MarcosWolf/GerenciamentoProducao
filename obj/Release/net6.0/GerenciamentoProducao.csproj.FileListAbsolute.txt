@@ -41,3 +41,8 @@ C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\obj\Rele
 C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\obj\Release\net6.0\GerenciamentoProducao.pdb
 C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\obj\Release\net6.0\GerenciamentoProducao.genruntimeconfig.cache
 C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\obj\Release\net6.0\ref\GerenciamentoProducao.dll
+C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\bin\Release\net6.0\PdfSharpCore.dll
+C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\bin\Release\net6.0\ICSharpCode.SharpZipLib.dll
+C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\bin\Release\net6.0\SixLabors.Fonts.dll
+C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\bin\Release\net6.0\SixLabors.ImageSharp.dll
+C:\Users\marco\source\repos\GerenciamentoProducao\GerenciamentoProducao\bin\Release\net6.0\de\PdfSharpCore.resources.dll
