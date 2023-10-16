@@ -102,6 +102,8 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        // Manage Product
+
         public static bool MP_UpdateProduct(int productId, int productQuantity, SQLiteConnector connector)
         {
             string query = @"UPDATE Product SET product_quantity = product_quantity + @ProductQuantity WHERE product_id = @ProductId";
@@ -223,7 +225,6 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(2, 9);
                         Console.WriteLine("A entrada não pode estar vazia.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
-
                         System.Threading.Thread.Sleep(1000);
                         ClearCurrentConsoleLine(0, 9);
                         ClearCurrentConsoleLine(0, 10);
@@ -257,7 +258,7 @@ namespace GerenciamentoProducao
                                 Console.SetCursorPosition(0, 7);
                                 Console.WriteLine("| Quantidade para adicionar:                                                             |");
                                 ClearCurrentConsoleLine(0, 9);
-                                ClearCurrentConsoleLine(0, 9);
+                                ClearCurrentConsoleLine(0, 10);
                                 input = "";
                             }
                         }
@@ -292,6 +293,9 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(2, 9);
                         Console.WriteLine("A entrada não pode estar vazia.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 9);
+                        ClearCurrentConsoleLine(0, 10);
                     }
                     else if (!input.All(char.IsDigit))
                     {
@@ -300,10 +304,12 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(2, 9);
                         Console.WriteLine("A entrada deve conter apenas números.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
-                        input = "";
+                        System.Threading.Thread.Sleep(1000);
                         Console.SetCursorPosition(0, 5);
                         Console.WriteLine("| Produto:                                                                |");
-                        //MEXER
+                        ClearCurrentConsoleLine(0, 9);
+                        ClearCurrentConsoleLine(0, 10);
+                        input = "";
                     }
                     else
                     {
@@ -369,6 +375,8 @@ namespace GerenciamentoProducao
 
             while (repeat)
             {
+                Console.Title = "Gerenciar Produto";
+
                 Console.WriteLine("! Gerenciar Produto                                                       !");
                 Console.WriteLine("+-------------------------------------------------------------------------+");
                 Console.WriteLine("| Produto:                                                                |");
@@ -403,6 +411,8 @@ namespace GerenciamentoProducao
                 }
             }
         }
+
+        // Register Product
 
         public static bool RP_RegisterProduct(string productName, int productQuantity, SQLiteConnector connector)
         {
@@ -618,6 +628,7 @@ namespace GerenciamentoProducao
 
             while (repeat)
             {
+                Console.Title = "Cadastrar Produto";
 
                 Console.WriteLine("! Cadastrar Produto                                                       !");
                 Console.WriteLine("+-------------------------------------------------------------------------+");
@@ -653,6 +664,68 @@ namespace GerenciamentoProducao
             }
         }
 
+        // List Orders
+
+        public static void LO_ShowOrders(int orderType)
+        {
+
+        }
+
+        public static void ListOrders(SQLiteConnector connector)
+        {
+            bool listRunning = true;
+            int currentState = 0;
+
+            while (listRunning)
+            {
+                switch(currentState)
+                {
+                    case 0:
+                        Console.Title = "Listar Ordens";
+                        InterfaceHeader();
+                        Console.WriteLine("| 1 - Ordens em andamento                                                 |");
+                        Console.WriteLine("| 2 - Ordens concluídas                                                   |");
+                        Console.WriteLine("| 0 - Voltar                                                              |");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        Console.WriteLine("! Selecione uma opção:                                                    !");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        Console.SetCursorPosition(23, 7);
+                        char keyPressed = Console.ReadKey().KeyChar;
+
+                        if (keyPressed == '0')
+                        {
+                            listRunning = false;
+                        }
+                        else if (keyPressed == '1')
+                        {
+                            currentState = 1;
+                        }
+                        else if (keyPressed == '2')
+                        {
+                            currentState = 2;
+                        }
+                        break;
+
+                    case 1: // Em andamento
+                        InterfaceHeader();
+                        LO_ShowOrders(0);
+                        currentState = 0;
+                        break;
+
+                    case 2: // Concluídas
+                        InterfaceHeader();
+                        LO_ShowOrders(1);
+                        currentState = 0;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+
+        // Register Order
         public static bool RO_RemoveMaterial(int productId, int orderQuantity, SQLiteConnector connector)
         {
             string query = @"UPDATE Product SET product_quantity = product_quantity - @OrderQuantity WHERE product_id = @ProductId";
@@ -1096,7 +1169,8 @@ namespace GerenciamentoProducao
 
             while (repeat)
             {
-                
+                Console.Title = "Registrar Ordem";
+
                 Console.WriteLine("! Registrar Ordem                                                         !");
                 Console.WriteLine("+-------------------------------------------------------------------------+");
                 Console.WriteLine("| Produto:                                                                |");
@@ -1151,7 +1225,7 @@ namespace GerenciamentoProducao
                         Console.WriteLine("| 1 - Registrar Ordem                                                     |");
                         Console.WriteLine("| 2 - Listar Ordens                                                       |");
                         Console.WriteLine("| 3 - Cadastrar Produto                                                   |");
-                        Console.WriteLine("| 4 - Gerenciar Materiais                                                 |");
+                        Console.WriteLine("| 4 - Gerenciar Produto                                                   |");
                         Console.WriteLine("| 0 - Sair                                                                |");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
                         Console.WriteLine("! Selecione uma opção:                                                    !");
@@ -1186,7 +1260,7 @@ namespace GerenciamentoProducao
 
                     case 2: // Listar Ordens
                         InterfaceHeader();
-                        //ListOrders(connector);
+                        ListOrders(connector);
                         currentState = 0;
                         break;
 
