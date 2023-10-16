@@ -1117,7 +1117,7 @@ namespace GerenciamentoProducao
             new XRect(0, 0, page2.Width, 100),
             XStringFormats.Center);
 
-                gfx2.DrawString("Ordens Concluídas (27)", subtitleFont, XBrushes.Black,
+                gfx2.DrawString("Ordens Concluídas (" + completedOrders.Count + ")", subtitleFont, XBrushes.Black,
                     new XRect(0, 30, page2.Width, 100),
                     XStringFormats.Center);
 
