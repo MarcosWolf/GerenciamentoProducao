@@ -868,7 +868,7 @@ namespace GerenciamentoProducao
                                 Console.SetCursorPosition(2, 3);
                                 Console.WriteLine("Ordem alterada com sucesso. Pressione ENTER para voltar ao menu.");
                                 Console.WriteLine("+-------------------------------------------------------------------------+");
-                                Console.SetCursorPosition(68, 3);
+                                Console.SetCursorPosition(67, 3);
                                 Console.ReadKey();
                             }
                             else
@@ -889,15 +889,15 @@ namespace GerenciamentoProducao
                     ConsoleKeyInfo keyFinished = Console.ReadKey();
                     if (keyFinished.Key == ConsoleKey.Escape)
                     {
-                        break; // Sai do loop while quando a tecla "ESC" é pressionada
+                        break;
                     }
                 }
             }
         }
 
-        public static bool LO_ShowOrders(int orderType, SQLiteConnector connector)
+        public static List<Tuple<int, string, int, string>> LO_LoadOrders(int orderType, SQLiteConnector connector)
         {
-            bool running = true;
+            List<Tuple<int, string, int, string>> orders = new List<Tuple<int, string, int, string>>();
             string query = "SELECT o.*, p.product_name FROM [Order] o INNER JOIN Product p ON o.product_id = p.product_id WHERE o.order_status = @OrderType";
 
             try
@@ -907,8 +907,6 @@ namespace GerenciamentoProducao
                     command.Parameters.AddWithValue("@OrderType", orderType);
                     connector.OpenConnection();
                     var reader = command.ExecuteReader();
-
-                    var orders = new List<Tuple<int, string, int, string>>();
 
                     while (reader.Read())
                     {
@@ -921,71 +919,7 @@ namespace GerenciamentoProducao
                         orders.Add(new Tuple<int, string, int, string>(orderId, productName, orderQuantity, formattedOrder));
                     }
 
-                    int selectedItemIndex = 0;
-                    int itemCount = orders.Count;
-
-                    int itemsToShow = 20;
-
-                    ConsoleKeyInfo key;
-
-                    while (running)
-                    {
-                        InterfaceHeader();
-                        CreateWindow(1);
-                        Console.SetCursorPosition(2, 3);
-                        Console.WriteLine("{0,-10}\t{1,-20}\t{2,-15}\t{3,-15}", "N° Ordem", "Nome", "Quantidade", "Data"); // Cabeçalho da tabela
-                        Console.WriteLine("+-------------------------------------------------------------------------+");
-                        CreateWindow(itemCount);
-                        Console.SetCursorPosition(2, 5);
-
-                        int startIndex = Math.Max(0, selectedItemIndex - itemsToShow + 1);
-                        int endIndex = Math.Min(itemCount, startIndex + itemsToShow);
-
-                        for (int i = startIndex; i < endIndex; i++)
-                        {
-                            Console.SetCursorPosition(2, 5 + i - startIndex);
-
-                            if (i == selectedItemIndex)
-                            {
-                                Console.BackgroundColor = ConsoleColor.Gray;
-                                Console.ForegroundColor = ConsoleColor.Black;
-                            }
-
-                            Console.WriteLine(orders[i].Item4);
-
-                            if (i == selectedItemIndex)
-                            {
-                                Console.ResetColor();
-                            }
-                        }
-                        Console.WriteLine("+-------------------------------------------------------------------------+");
-                        Console.WriteLine("| ENTER para ver mais detalhes                                            |");
-                        Console.WriteLine("| ESC para voltar ao menu                                                 |");
-                        Console.WriteLine("+-------------------------------------------------------------------------+");
-
-                        key = Console.ReadKey(true);
-
-                        if (key.Key == ConsoleKey.DownArrow && selectedItemIndex < itemCount - 1)
-                        {
-                            selectedItemIndex++;
-                        }
-                        else if (key.Key == ConsoleKey.UpArrow && selectedItemIndex > 0)
-                        {
-                            selectedItemIndex--;
-                        }
-                        else if (key.Key == ConsoleKey.Enter)
-                        {
-                            // Ir pra função com o order_id
-                            int selectedOrderId = orders[selectedItemIndex].Item1;
-                            LO_OrderStatus(selectedOrderId, connector);
-                        }
-                        else if (key.Key == ConsoleKey.Escape)
-                        {
-                            running = false;
-                        }
-                    }
-
-                    connector.CloseConnection();
+                    return orders;
                 }
             }
             catch (Exception ex)
@@ -996,8 +930,83 @@ namespace GerenciamentoProducao
             finally
             {
                 connector.CloseConnection();
+
+                InterfaceHeader();
+                CreateWindow(1);
+                Console.SetCursorPosition(2, 3);
+                Console.WriteLine("{0,-10}\t{1,-20}\t{2,-15}\t{3,-15}", "N° Ordem", "Nome", "Quantidade", "Data"); // Cabeçalho da tabela
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+                CreateWindow(orders.Count);
+                Console.SetCursorPosition(2, 5);
             }
 
+            return orders;
+        }
+
+        public static bool LO_ShowOrders(int orderType, SQLiteConnector connector)
+        {
+            bool running = true;
+            ConsoleKeyInfo key;
+
+            while (running)
+            {
+                List<Tuple<int, string, int, string>> orders = LO_LoadOrders(orderType, connector);
+
+                int selectedItemIndex = 0;
+                int itemsToShow = 20;
+                int startIndex, endIndex;
+
+                do
+                {
+                    startIndex = Math.Max(0, selectedItemIndex - itemsToShow + 1);
+                    endIndex = Math.Min(orders.Count, startIndex + itemsToShow);
+
+                    for (int i = startIndex; i < endIndex; i++)
+                    {
+                        Console.SetCursorPosition(2, 5 + i - startIndex);
+
+                        if (i == selectedItemIndex)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Gray;
+                            Console.ForegroundColor = ConsoleColor.Black;
+                        }
+
+                        Console.WriteLine(orders[i].Item4);
+
+                        if (i == selectedItemIndex)
+                        {
+                            Console.ResetColor();
+                        }
+                    }
+
+                    Console.WriteLine("+-------------------------------------------------------------------------+");
+                    Console.WriteLine("| ENTER para ver mais detalhes                                            |");
+                    Console.WriteLine("| ESC para voltar ao menu                                                 |");
+                    Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                    key = Console.ReadKey(true);
+
+                    if (key.Key == ConsoleKey.DownArrow && selectedItemIndex < orders.Count - 1)
+                    {
+                        selectedItemIndex++;
+                    }
+                    else if (key.Key == ConsoleKey.UpArrow && selectedItemIndex > 0)
+                    {
+                        selectedItemIndex--;
+                    }
+                    else if (key.Key == ConsoleKey.Enter)
+                    {
+                        int selectedOrderId = orders[selectedItemIndex].Item1;
+                        LO_OrderStatus(selectedOrderId, connector);
+                        orders = LO_LoadOrders(orderType, connector);
+                    }
+                    else if (key.Key == ConsoleKey.Escape)
+                    {
+                        running = false;
+                    }
+                } while (running);
+            }
+            
             return false;
         }
 
@@ -1039,7 +1048,7 @@ namespace GerenciamentoProducao
                     case 1: // Em andamento
                         if (!LO_ShowOrders(0, connector))
                         {
-                            currentState = 0; // Retorna ao menu anterior se a tecla ESC for pressionada
+                            currentState = 0;
                         }
                         else
                         {
