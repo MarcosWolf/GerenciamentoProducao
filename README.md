@@ -9,9 +9,9 @@ Um sistema de gestão que permite aos usuários registrar novas ordens, listar a
 
 ### Dependências
 
-A aplicação requer o .NET Framework para executar corretamente. Certifique-se de que o .NET Framework esteja atualizado em seu sistema. Você pode baixar a versão mais recente do .NET Framework no site oficial da Microsoft.
+A aplicação requer o .NET 6.0 ou superior para executar corretamente. Certifique-se de que o .NET 7.0 esteja atualizado em seu sistema. Você pode baixar a versão mais recente do .NET 7.0 no site oficial da Microsoft.
 
-https://dotnet.microsoft.com/pt-br/download/dotnet-framework
+https://dotnet.microsoft.com/pt-br/download.
 
 
 ### Como rodar o projeto
