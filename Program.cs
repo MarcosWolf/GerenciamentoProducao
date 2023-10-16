@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SQLite;
 using System.Globalization;
-using System.Data.SQLite;
-using System.Xml;
 
 namespace GerenciamentoProducao
 {
@@ -92,6 +84,13 @@ namespace GerenciamentoProducao
             return formatedDate;
         }
 
+        public static void CreateWindow(int quantity)
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                Console.WriteLine("|                                                                         |");
+            }
+        }
         public static void InterfaceHeader()
         {
             string currentDate = GetDate();
@@ -666,9 +665,103 @@ namespace GerenciamentoProducao
 
         // List Orders
 
-        public static void LO_ShowOrders(int orderType)
+        public static bool LO_ShowOrders(int orderType, SQLiteConnector connector)
         {
+            string query = "SELECT o.*, p.product_name FROM [Order] o INNER JOIN Product p ON o.product_id = p.product_id WHERE o.order_status = 0";
 
+            try
+            {
+                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                {
+                    connector.OpenConnection();
+                    var reader = command.ExecuteReader();
+
+                    var orders = new List<Tuple<int, string, int, string>>();
+
+                    while (reader.Read())
+                    {
+                        int orderId = Convert.ToInt32(reader["order_id"]);
+                        string productName = Convert.ToString(reader["product_name"]);
+                        int orderQuantity = Convert.ToInt32(reader["order_quantity"]);
+                        string deliveryDate = Convert.ToString(reader["order_deliveryDate"]);
+
+                        string formattedOrder = string.Format("{0,-10}\t{1,-20}\t{2,-15}\t{3,-15}", orderId, productName, orderQuantity, deliveryDate);
+                        orders.Add(new Tuple<int, string, int, string>(orderId, productName, orderQuantity, formattedOrder));
+                    }
+
+                    int selectedItemIndex = 0;
+                    int itemCount = orders.Count;
+
+                    int itemsToShow = 20;
+                    int currentIndex = 0;
+
+                    ConsoleKeyInfo key;
+
+                    do
+                    {
+                        InterfaceHeader();
+                        CreateWindow(1);
+                        Console.SetCursorPosition(2, 3);
+                        Console.WriteLine("{0,-10}\t{1,-20}\t{2,-15}\t{3,-15}", "N° Ordem", "Nome", "Quantidade", "Data"); // Cabeçalho da tabela
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        CreateWindow(itemCount);
+                        Console.SetCursorPosition(2, 5);
+
+                        int startIndex = Math.Max(0, selectedItemIndex - itemsToShow + 1);
+                        int endIndex = Math.Min(itemCount, startIndex + itemsToShow);
+
+                        for (int i = startIndex; i < endIndex; i++)
+                        {
+                            Console.SetCursorPosition(2, 5 + i - startIndex);
+
+                            if (i == selectedItemIndex)
+                            {
+                                Console.BackgroundColor = ConsoleColor.Gray;
+                                Console.ForegroundColor = ConsoleColor.Black;
+                            }
+
+                            Console.WriteLine(orders[i].Item4);
+
+                            if (i == selectedItemIndex)
+                            {
+                                Console.ResetColor();
+                            }
+                        }
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+                        Console.WriteLine("| ENTER para ver mais detalhes                                            |");
+                        Console.WriteLine("| ESC para voltar ao menu                                                 |");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        key = Console.ReadKey(true);
+
+                        if (key.Key == ConsoleKey.DownArrow && selectedItemIndex < itemCount - 1)
+                        {
+                            selectedItemIndex++;
+                        }
+                        else if (key.Key == ConsoleKey.UpArrow && selectedItemIndex > 0)
+                        {
+                            selectedItemIndex--;
+                        }
+                        else if (key.Key == ConsoleKey.Escape)
+                        {
+                            return true;
+                        }
+                    } while (key.Key != ConsoleKey.Enter);
+
+                    connector.CloseConnection();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao realizar consulta: " + ex);
+            }
+            finally
+            {
+                connector.CloseConnection();
+            }
+
+            return false;
         }
 
         public static void ListOrders(SQLiteConnector connector)
@@ -708,13 +801,20 @@ namespace GerenciamentoProducao
 
                     case 1: // Em andamento
                         InterfaceHeader();
-                        LO_ShowOrders(0);
-                        currentState = 0;
+                        if (LO_ShowOrders(0, connector))
+                        {
+                            currentState = 0; // Retorna ao menu anterior se a tecla ESC for pressionada
+                        }
+                        else
+                        {
+                            Console.ReadLine();
+                            currentState = 0;
+                        }
                         break;
 
                     case 2: // Concluídas
                         InterfaceHeader();
-                        LO_ShowOrders(1);
+                        LO_ShowOrders(1, connector);
                         currentState = 0;
                         break;
 
