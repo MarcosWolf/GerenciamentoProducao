@@ -43,12 +43,13 @@ O banco de dados utilizado na aplicação foi o SQLite. Ele é amplamente conhec
 ## Funcionalidades
 
 - [X] Registrar Ordem de Fabricação
-- [X] Lista Interativa com ordens existentes
+- [X] Lista Interativa com Ordens Existentes
 - [X] Geração de Relatórios em PDF
-- [X] Alteração do estado de processo da ordem
-- [X] Cadastro de novos produtos
-- [X] Gerenciamento de produtos
-- [X] Tratamento de exceções e validações de erros
+- [X] Alteração do Estado de Processo da Ordem
+- [X] Cadastro de Novos Produtos
+- [X] Gerenciamento de Produtos
+- [X] Tratamento de Exceções e Validações de Erros
+- [X] Código Documentado 
 
 ## Funcionamento
 
