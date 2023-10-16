@@ -134,8 +134,8 @@ namespace GerenciamentoProducao
         }
 
         /*
-         * Manage Product
-         */
+          * Manage Product
+        */
 
         /// <summary>
         /// Atualiza a quantidade de um produto no banco de dados.
@@ -590,7 +590,7 @@ namespace GerenciamentoProducao
         }
 
         /// <summary>
-        /// Valida os dados de entrada referentes a quantidade.
+        /// Valida os dados de entrada referentes a quantidade inicial.
         /// </summary>
         /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Quantidade.</returns>
         public static string RP_ValidateProductQuantity()
@@ -1309,9 +1309,15 @@ namespace GerenciamentoProducao
                         break;
 
                     case 2: // Concluídas
-                        InterfaceHeader();
-                        LO_ShowOrders(1, connector);
-                        currentState = 0;
+                        if (!LO_ShowOrders(1, connector))
+                        {
+                            currentState = 0;
+                        }
+                        else
+                        {
+                            Console.ReadLine();
+                            currentState = 0;
+                        }
                         break;
 
                     case 3: // Relatório PDF
@@ -1326,7 +1332,17 @@ namespace GerenciamentoProducao
             }
         }
 
-        // Register Order
+        /*
+         * Register Order
+        */
+
+        /// <summary>
+        /// Remove a quantidade de Materiais do Produto utilizadas na Criação da Ordem.
+        /// </summary>
+        /// <param name="productId">O ID do produto a ser alterado.</param>
+        /// <param name="productQuantity">A quantidade a ser retirada do produto.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Verdadeiro se a alteração foi bem-sucedida, falso caso contrário.</returns>
         public static bool RO_RemoveMaterial(int productId, int orderQuantity, SQLiteConnector connector)
         {
             string query = @"UPDATE Product SET product_quantity = product_quantity - @OrderQuantity WHERE product_id = @ProductId";
@@ -1363,6 +1379,13 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /// <summary>
+        /// Cadastra uma nova ordem no banco de dados.
+        /// </summary>
+        /// <param name="orderId">O ID do produto correspondente a ordem criada.</param>
+        /// <param name="orderQuantity">A quantidade a ser adicionada ao produto.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Verdadeiro se a atualização foi bem-sucedida, falso caso contrário.</returns>
         public static bool RO_RegisterOrder(int orderId, int orderQuantity, string orderDate, SQLiteConnector connector)
         {
             string query = "INSERT INTO [Order] (product_id, order_quantity, order_deliveryDate, order_status) VALUES (@ProductId, @OrderQuantity, @OrderDeliveryDate, 0)";
@@ -1407,6 +1430,10 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /// <summary>
+        /// Confirma a intenção do usuário de continuar o processo de criar uma nova ordem.
+        /// </summary>
+        /// <returns>Verdadeiro se o usuário optou por confirmar, falso caso contrário.</returns>
         public static bool RO_ConfirmOrder()
         {
             string? input = "";
@@ -1473,6 +1500,10 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /// <summary>
+        /// Valida os dados de entrada referentes a data de entrega.
+        /// </summary>
+        /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Data de Entrega.</returns>
         public static string RO_ValidateProductDate()
         {
             string? input = "";
@@ -1543,6 +1574,12 @@ namespace GerenciamentoProducao
             return input;
         }
 
+        /// <summary>
+        /// Valida os dados de entrada referentes a quantidade.
+        /// </summary>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <param name="orderId">O ID do produto referente a ordem para ser consultado no banco de dados.</param>
+        /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Quantidade.</returns>
         public static string RO_ValidateProductQuantity(SQLiteConnector connector, int orderId)
         {
             string? input = "";
@@ -1658,6 +1695,11 @@ namespace GerenciamentoProducao
             return input;
         }
 
+        /// <summary>
+        /// Valida os dados de entrada referentes ao código do Produto.
+        /// </summary>
+        /// /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Id</returns>
         public static string RO_ValidateProductInput(SQLiteConnector connector)
         {
             string? input = "";
@@ -1771,6 +1813,10 @@ namespace GerenciamentoProducao
             return input;
         }
 
+        /// <summary>
+        /// Permite registrar uma nova ordem no sistema, o método solicita ao usuário informações sobre o produto, quantidade e data de entrega da ordem.
+        /// </summary>
+        /// <param name="connector">O conector SQLite utilizado para acessar o banco de dados.</param>
         public static void RegisterOrder(SQLiteConnector connector)
         {
             bool repeat = true;
@@ -1816,6 +1862,10 @@ namespace GerenciamentoProducao
             }
         }
 
+        /// <summary>
+        /// Ponto de entrada principal do programa. Responsável por controlar o fluxo do sistema, permitindo que o usuário navegue
+        /// entre diferentes funcionalidades: registrar ordens, alterar estado de ordem, listar ordens, gerar relatórios, cadastrar produtos e gerenciar produtos.
+        /// </summary>
         static void Main()
         {
             SQLiteConnector connector = new();
