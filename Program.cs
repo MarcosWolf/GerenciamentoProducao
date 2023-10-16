@@ -1356,6 +1356,10 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(2, 10);
                         Console.WriteLine("A entrada não pode estar vazia.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 10);
+                        ClearCurrentConsoleLine(0, 11);
                     }
                     else if (!input.All(char.IsDigit))
                     {
@@ -1364,10 +1368,13 @@ namespace GerenciamentoProducao
                         Console.SetCursorPosition(2, 10);
                         Console.WriteLine("A entrada deve conter apenas números.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
-                        input = "";
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 10);
+                        ClearCurrentConsoleLine(0, 11);
                         Console.SetCursorPosition(0, 5);
                         Console.WriteLine("| Produto:                                                                |");
-                        // Colocar timer e remover aviso
+                        input = "";
                     }
                     else
                     {
