@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "++ulb8aC57AMO4AUWoUNVnaGTpys58AUAKuJ0Vn+N+dusNeqZsFXSUzIeW6bvnmjAgyfZg7lxHYDgjNWIjvIDA==",
+  "dgSpecHash": "UdyEZ3ZOLYywUAIiCIlBDxxjl/cX2fjTtBiGc8+CJ5Zk+udgrphhvsQ8yD9T9+aSQdIWwzzYmR/sJ09AjMPFKg==",
   "success": true,
   "projectFilePath": "C:\\Users\\marco\\source\\repos\\GerenciamentoProducao\\GerenciamentoProducao\\GerenciamentoProducao.csproj",
   "expectedPackageFiles": [
@@ -9,10 +9,14 @@
     "C:\\Users\\marco\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\marco\\.nuget\\packages\\pdfsharpcore\\1.3.62\\pdfsharpcore.1.3.62.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\runtime.native.system.data.sqlclient.sni\\4.7.0\\runtime.native.system.data.sqlclient.sni.4.7.0.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\runtime.win-x64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\runtime.win-x86.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
+    "C:\\Users\\marco\\.nuget\\packages\\sharpziplib\\1.3.3\\sharpziplib.1.3.3.nupkg.sha512",
+    "C:\\Users\\marco\\.nuget\\packages\\sixlabors.fonts\\1.0.0-beta17\\sixlabors.fonts.1.0.0-beta17.nupkg.sha512",
+    "C:\\Users\\marco\\.nuget\\packages\\sixlabors.imagesharp\\1.0.4\\sixlabors.imagesharp.1.0.4.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\stub.system.data.sqlite.core.netstandard\\1.0.118\\stub.system.data.sqlite.core.netstandard.1.0.118.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\system.codedom\\4.7.0\\system.codedom.4.7.0.nupkg.sha512",
     "C:\\Users\\marco\\.nuget\\packages\\system.componentmodel.annotations\\4.7.0\\system.componentmodel.annotations.4.7.0.nupkg.sha512",
