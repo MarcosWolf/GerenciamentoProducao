@@ -102,6 +102,42 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
+        public static bool MP_UpdateProduct(int productId, int productQuantity, SQLiteConnector connector)
+        {
+            string query = @"UPDATE Product SET product_quantity = product_quantity + @ProductQuantity WHERE product_id = @ProductId";
+
+            try
+            {
+                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                {
+                    command.Parameters.AddWithValue("ProductQuantity", productQuantity);
+                    command.Parameters.AddWithValue("ProductId", productId);
+
+                    connector.OpenConnection();
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao realizar consulta: " + ex);
+            }
+            finally
+            {
+                connector.CloseConnection();
+            }
+
+            return false;
+        }
+
         public static bool MP_ConfirmChange()
         {
             string? input = "";
