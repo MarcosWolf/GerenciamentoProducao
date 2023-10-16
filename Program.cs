@@ -2,9 +2,22 @@
 using System.Globalization;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
+using System.Diagnostics;
+
+/*
+ * Gerenciamento de Controle de Produção - Desafio Técnico
+ * Desenvolvido por: Marcos Vinícios do Carmo Ramos
+ * (013) 98131-4531
+ * www.github.com/MarcosWolf/
+ * www.marcoswolf.com.br/
+ * www.linkedin.com/in/MarcosWolf
+*/
 
 namespace GerenciamentoProducao
 {
+    /// <summary>
+    /// Esta classe é responsável pela conexão com o banco de dados SQLite
+    /// </summary>
     public class SQLiteConnector
     {
         private SQLiteConnection? _connection;
@@ -105,6 +118,13 @@ namespace GerenciamentoProducao
 
         // Manage Product
 
+        /// <summary>
+        /// Atualiza a quantidade de um produto no banco de dados.
+        /// </summary>
+        /// <param name="productId">O ID do produto a ser atualizado.</param>
+        /// <param name="productQuantity">A quantidade a ser adicionada ao produto.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Verdadeiro se a atualização foi bem-sucedida, falso caso contrário.</returns>
         public static bool MP_UpdateProduct(int productId, int productQuantity, SQLiteConnector connector)
         {
             string query = @"UPDATE Product SET product_quantity = product_quantity + @ProductQuantity WHERE product_id = @ProductId";
@@ -141,6 +161,10 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /// <summary>
+        /// Confirma a intenção do usuário de continuar o processo de incremento de quantidade.
+        /// </summary>
+        /// <returns>Verdadeiro se o usuário optou por confirmar, falso caso contrário.</returns>
         public static bool MP_ConfirmChange()
         {
             string? input = "";
@@ -207,6 +231,10 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /// <summary>
+        /// Valida os dados de entrada referentes a quantidade.
+        /// </summary>
+        /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Quantidade.</returns>
         public static string MP_ValidateProductQuantity()
         {
             string? input = "";
@@ -275,6 +303,11 @@ namespace GerenciamentoProducao
             return input;
         }
 
+        /// <summary>
+        /// Valida os dados de entrada referentes ao código do Produto.
+        /// </summary>
+        /// /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Id</returns>
         public static string MP_ValidateProductInput(SQLiteConnector connector)
         {
             string? input = "";
@@ -370,6 +403,11 @@ namespace GerenciamentoProducao
             return input;
         }
 
+        /// <summary>
+        /// Gerencia a atualização de um produto no banco de dados. Solicita a entrada do ID do produto e a quantidade a ser adicionada,
+        /// confirma a operação e atualiza a quantidade do produto. Exibe mensagens de sucesso ou falha de atualização.
+        /// </summary>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
         public static void ManageProduct(SQLiteConnector connector)
         {
             bool repeat = true;
@@ -1096,6 +1134,15 @@ namespace GerenciamentoProducao
 
                 const string filename = "Report.pdf";
                 document.Save(filename);
+
+                if (File.Exists(filename))
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = filename,
+                        UseShellExecute = true
+                    });
+                }
             }
 
             return true;
