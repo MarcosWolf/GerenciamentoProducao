@@ -668,7 +668,7 @@ namespace GerenciamentoProducao
             return false;
         }
 
-        public static void LO_DetailedData(int orderId, SQLiteConnector connector)
+        public static bool LO_DetailedData(int orderId, SQLiteConnector connector)
         {
             string query = "SELECT o.*, p.product_name FROM [Order] o INNER JOIN Product p ON o.product_id = p.product_id WHERE o.order_id = @OrderId";
 
@@ -698,13 +698,16 @@ namespace GerenciamentoProducao
                             if (orderStatus == 0)
                             {
                                 Console.WriteLine("Em andamento");
+                                return true;
                             } else if (orderStatus == 1)
                             {
                                 Console.WriteLine("Concluído");
+                                return false;
                             } else
                             {
                                 Console.Clear();
                                 Console.WriteLine("Operação inválida.");
+                                return false;
                             }
                         }
                     }
@@ -719,6 +722,8 @@ namespace GerenciamentoProducao
             {
                 connector.CloseConnection();
             }
+
+            return false;
         }
 
         // List Orders
@@ -739,13 +744,27 @@ namespace GerenciamentoProducao
                 Console.WriteLine("| Pressione ESC para voltar.                                              |");
                 Console.WriteLine("+-------------------------------------------------------------------------+");
 
-                LO_DetailedData(orderId, connector);
-                Console.ReadKey();
-                bool changeStatusIsConfirmed = LO_ConfirmChange();
-
-                if (changeStatusIsConfirmed)
+                bool isDevelopmentStatus = LO_DetailedData(orderId, connector);
+                if (isDevelopmentStatus)
                 {
+                    Console.SetCursorPosition(0, 10);
+                    Console.WriteLine("| Pressione ENTER para alterar o status para concluído.                   |");
+                    Console.WriteLine("| Pressione ESC para voltar.                                              |");
+                    Console.WriteLine("+-------------------------------------------------------------------------+");
 
+                    bool changeStatusIsConfirmed = LO_ConfirmChange();
+
+                    if (changeStatusIsConfirmed)
+                    {
+
+                    }
+
+                }
+
+                ConsoleKeyInfo key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    break; // Sai do loop while quando a tecla "ESC" é pressionada
                 }
             }
         }
