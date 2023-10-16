@@ -1029,6 +1029,11 @@ namespace GerenciamentoProducao
                         int orderQuantity = Convert.ToInt32(reader["order_quantity"]);
                         string deliveryDate = Convert.ToString(reader["order_deliveryDate"]);
 
+                        if (productName.Length > 20)
+                        {
+                            productName = productName.Substring(0, 20);
+                        }
+
                         string formattedOrder = string.Format("{0,-10}\t{1,-20}\t{2,-15}\t{3,-15}", orderId, productName, orderQuantity, deliveryDate);
                         orders.Add(new Tuple<int, string, int, string>(orderId, productName, orderQuantity, formattedOrder));
                     }
