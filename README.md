@@ -55,55 +55,55 @@ O banco de dados utilizado na aplicação foi o SQLite. Ele é amplamente conhec
 
 Nesta tela principal, o usuário tem a opção de escolher: Registrar uma nova ordem de produção, Listar ordens existentes e Alterar seu estado, Cadastrar novos produtos , Gerenciar a quantidade de seus estoques e Sair da aplicação.
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/efabd923-275a-4b19-9759-b6a695e61445")
+![1](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/75fc48aa-cd72-459c-ad5a-4e87f36be21b)
 
 Ao escolher a opção Registrar Ordem, o usuário deve inserir o código do Produto, a quantidade que irá ser utilizada no processo e a data estipulada para a entrega.
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/d58e9f75-b556-4e9b-a725-a52b9e7d1e1c")
+![2](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/0ee8f9c3-c566-431b-b5bf-2ab91a1df40a)
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/0399b7ee-83bf-46ee-aca3-1d0139f9c611")
+![3](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/14635a76-71d3-4ff7-97bf-268289bc7398)
 
 A aplicação permite listar Ordens já existentes para realizar acompanhamento e Gerar relatórios, são separadas em dois estados: Em andamento e Concluídas; Além disso, é possível gerar um relatório em PDF com os dados.
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/0c0dfc8c-dcfc-4d82-a700-70e26b18e4ff)
+![4](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/70505338-5963-45c3-b165-035af715f7e8)
 
 Listando ordens em andamento; Ao pressionar a tecla ENTER, podemos ver com mais detalhes as informações da ordem e também é possível alterar o seu estado.
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/076c781a-c0e1-4f3a-8cf2-75efc09900b9)
+![5](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/13703414-0bd5-4e0e-93bc-7e2edb7e5efb)
 
 Temos a opção de voltar pressionando ESC ou alterar o estado pressionando ENTER:
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/3ee1dee4-e184-4fe1-ab13-733617e7963d)
+![6](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/df2d9fad-9865-498e-a2ee-8350d29723a5)
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/bcad3f2f-3826-4a99-9e21-ce306573352a)
+![7](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/040cd7c7-a278-47ee-9625-e96f386b46f8)
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/21d89272-74a1-4e98-9f13-f2db8ec51c98)
+![8](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/585b6559-90ca-4a6e-aa9f-c37c7e77ced9)
 
 Agora a ordem se encontra no estado Concluído.
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/df2bbc7d-3501-4cd0-8fd6-0a29a1bfe310)
+![9](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/df06488d-173b-4e81-bc68-5a902ffbc3e3)
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/b7b97e70-1fa7-415e-83fd-8ea234f0500e)
+![10](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/ff7a6bc3-60f1-4140-a3c0-4e2c1fb8d4f3)
 
 Como dito anteriormente, também é possível gerar um relatório PDF das ordens:
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/5fc11f82-24b0-4c6e-bff0-eafc7d086a37)
+![11](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/66368e48-0e02-435b-a446-7df62f797ffb)
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/4382efbf-5404-4226-a9cc-7009714c379b)
+![12](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/955248d0-e82d-43e2-b983-d878f24168b1)
 
 Voltando para o Menu Principal, temos a opção de Cadastrar Produto; É solicitado o nome e a quantidade inicial de materiais para fabricação do produto.
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/e17552e2-5d19-4221-91c7-d2d0d8008917)
+![13](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/47640a52-68ff-4243-80ca-313c85d124d9)
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/4af45538-9fe8-4a7f-b7cd-bef89e4c27f1)
+![14](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/4a695d06-43b9-4fce-b38e-d372a2ba3f02)
 
 Também podemos Gerenciar o Produto, caso chegue mais materiais para fabricação.
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/4437f136-eecf-4f4d-8cd6-832660210d4f)
+![15](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/de26910c-9d9e-4327-9a26-9701b04d4dd8)
 
 Assim quando for realizada uma nova ordem, a quantidade de materiais serão suficientes:
 
-![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/8d311b64-ea4e-406f-887b-d0f3b395b9ed)
+![16](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/9c91cd1c-1d10-4f33-b025-5d2aa3d1fc20)
 
 ##  Autor
 
