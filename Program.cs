@@ -663,16 +663,103 @@ namespace GerenciamentoProducao
             }
         }
 
-        // List Orders
-
-        public static bool LO_ShowOrders(int orderType, SQLiteConnector connector)
+        public static bool LO_ConfirmChange()
         {
-            string query = "SELECT o.*, p.product_name FROM [Order] o INNER JOIN Product p ON o.product_id = p.product_id WHERE o.order_status = 0";
+            return false;
+        }
+
+        public static void LO_DetailedData(int orderId, SQLiteConnector connector)
+        {
+            string query = "SELECT o.*, p.product_name FROM [Order] o INNER JOIN Product p ON o.product_id = p.product_id WHERE o.order_id = @OrderId";
 
             try
             {
                 using (var command = new SQLiteCommand(query, connector.GetConnection()))
                 {
+                    command.Parameters.AddWithValue("@OrderId", orderId);
+                    connector.OpenConnection();
+
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            Console.SetCursorPosition(21, 3);
+                            Console.WriteLine(reader["order_id"]);
+                            Console.SetCursorPosition(11, 5);
+                            Console.WriteLine(reader["product_name"]);
+                            Console.SetCursorPosition(14, 6);
+                            Console.WriteLine(reader["order_quantity"]);
+                            Console.SetCursorPosition(19, 7);
+                            Console.WriteLine(reader["order_deliveryDate"]);
+                            Console.SetCursorPosition(10, 8);
+
+                            int orderStatus = Convert.ToInt32(reader["order_status"]);
+
+                            if (orderStatus == 0)
+                            {
+                                Console.WriteLine("Em andamento");
+                            } else if (orderStatus == 1)
+                            {
+                                Console.WriteLine("Concluído");
+                            } else
+                            {
+                                Console.Clear();
+                                Console.WriteLine("Operação inválida.");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao realizar consulta: " + ex);
+            }
+            finally
+            {
+                connector.CloseConnection();
+            }
+        }
+
+        // List Orders
+        public static void LO_OrderStatus(int orderId, SQLiteConnector connector)
+        {
+            bool repeat = true;
+
+            while (repeat)
+            {
+                InterfaceHeader();
+                Console.WriteLine("! Detalhes da Ordem:                                                      !");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+                Console.WriteLine("| Produto:                                                                |");
+                Console.WriteLine("| Quantidade:                                                             |");
+                Console.WriteLine("| Data de Entrega:                                                        |");
+                Console.WriteLine("| Status:                                                                 |");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+                Console.WriteLine("| Pressione ESC para voltar.                                              |");
+                Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                LO_DetailedData(orderId, connector);
+                Console.ReadKey();
+                bool changeStatusIsConfirmed = LO_ConfirmChange();
+
+                if (changeStatusIsConfirmed)
+                {
+
+                }
+            }
+        }
+
+        public static bool LO_ShowOrders(int orderType, SQLiteConnector connector)
+        {
+            bool running = true;
+            string query = "SELECT o.*, p.product_name FROM [Order] o INNER JOIN Product p ON o.product_id = p.product_id WHERE o.order_status = @OrderType";
+
+            try
+            {
+                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                {
+                    command.Parameters.AddWithValue("@OrderType", orderType);
                     connector.OpenConnection();
                     var reader = command.ExecuteReader();
 
@@ -693,11 +780,10 @@ namespace GerenciamentoProducao
                     int itemCount = orders.Count;
 
                     int itemsToShow = 20;
-                    int currentIndex = 0;
 
                     ConsoleKeyInfo key;
 
-                    do
+                    while (running)
                     {
                         InterfaceHeader();
                         CreateWindow(1);
@@ -742,11 +828,17 @@ namespace GerenciamentoProducao
                         {
                             selectedItemIndex--;
                         }
+                        else if (key.Key == ConsoleKey.Enter)
+                        {
+                            // Ir pra função com o order_id
+                            int selectedOrderId = orders[selectedItemIndex].Item1;
+                            LO_OrderStatus(selectedOrderId, connector);
+                        }
                         else if (key.Key == ConsoleKey.Escape)
                         {
-                            return true;
+                            running = false;
                         }
-                    } while (key.Key != ConsoleKey.Enter);
+                    }
 
                     connector.CloseConnection();
                 }
@@ -800,8 +892,7 @@ namespace GerenciamentoProducao
                         break;
 
                     case 1: // Em andamento
-                        InterfaceHeader();
-                        if (LO_ShowOrders(0, connector))
+                        if (!LO_ShowOrders(0, connector))
                         {
                             currentState = 0; // Retorna ao menu anterior se a tecla ESC for pressionada
                         }
