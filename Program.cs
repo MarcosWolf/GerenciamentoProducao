@@ -402,11 +402,12 @@ namespace GerenciamentoProducao
                         Console.WriteLine("+-------------------------------------------------------------------------+");
                         Console.SetCursorPosition(68, 3);
                         Console.ReadKey();
-                    } else
-                    {
-                        Console.Clear();
-                        InterfaceHeader();
                     }
+                }
+                else
+                {
+                    Console.Clear();
+                    InterfaceHeader();
                 }
             }
         }
@@ -665,6 +666,68 @@ namespace GerenciamentoProducao
 
         public static bool LO_ConfirmChange()
         {
+            string? input = "";
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    Console.SetCursorPosition(0, 10);
+                    Console.WriteLine("|                                                                         |");
+                    Console.SetCursorPosition(2, 10);
+                    Console.WriteLine("Deseja confirmar a entrada? (S/N):");
+                    Console.WriteLine("+-------------------------------------------------------------------------+");
+                    ClearCurrentConsoleLine(0, 12);
+                    Console.SetCursorPosition(37, 10);
+                    input = Console.ReadLine();
+
+                    if (input == null && string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.SetCursorPosition(0, 10);
+                        Console.WriteLine("|                                                                         |");
+                        Console.SetCursorPosition(2, 10);
+                        Console.WriteLine("Confirmação inválida.");
+                        Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                        System.Threading.Thread.Sleep(1000);
+                        ClearCurrentConsoleLine(0, 10);
+                        ClearCurrentConsoleLine(0, 11);
+                        input = "";
+                    }
+                    else
+                    {
+                        input = input.Trim().ToUpper();
+
+                        if (input != "S" && input != "N")
+                        {
+                            Console.SetCursorPosition(0, 10);
+                            Console.WriteLine("|                                                                         |");
+                            Console.SetCursorPosition(2, 10);
+                            Console.WriteLine("Confirmação inválida.");
+                            Console.WriteLine("+-------------------------------------------------------------------------+");
+
+                            System.Threading.Thread.Sleep(1000);
+                            ClearCurrentConsoleLine(0, 10);
+                            ClearCurrentConsoleLine(0, 11);
+                            input = "";
+                        }
+                        else if (input == "S")
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Operação inválida: " + ex);
+                }
+            }
+
             return false;
         }
 
@@ -752,17 +815,25 @@ namespace GerenciamentoProducao
                     Console.WriteLine("| Pressione ESC para voltar.                                              |");
                     Console.WriteLine("+-------------------------------------------------------------------------+");
 
-                    bool changeStatusIsConfirmed = LO_ConfirmChange();
-
-                    if (changeStatusIsConfirmed)
+                    ConsoleKeyInfo keyUnfinished = Console.ReadKey();
+                    if (keyUnfinished.Key == ConsoleKey.Enter)
                     {
+                        bool changeStatusIsConfirmed = LO_ConfirmChange();
 
+                        if (changeStatusIsConfirmed)
+                        {
+
+                        }
+                    }
+                    else if (keyUnfinished.Key == ConsoleKey.Escape)
+                    {
+                        break;
                     }
 
                 }
 
-                ConsoleKeyInfo key = Console.ReadKey();
-                if (key.Key == ConsoleKey.Escape)
+                ConsoleKeyInfo keyFinished = Console.ReadKey();
+                if (keyFinished.Key == ConsoleKey.Escape)
                 {
                     break; // Sai do loop while quando a tecla "ESC" é pressionada
                 }
@@ -934,7 +1005,6 @@ namespace GerenciamentoProducao
             }
         }
 
-
         // Register Order
         public static bool RO_RemoveMaterial(int productId, int orderQuantity, SQLiteConnector connector)
         {
@@ -1034,15 +1104,15 @@ namespace GerenciamentoProducao
 
                     if (input == null && string.IsNullOrWhiteSpace(input))
                     {
-                        Console.SetCursorPosition(0, 12);
+                        Console.SetCursorPosition(0, 10);
                         Console.WriteLine("|                                                                         |");
-                        Console.SetCursorPosition(2, 12);
+                        Console.SetCursorPosition(2, 10);
                         Console.WriteLine("Confirmação inválida.");
                         Console.WriteLine("+-------------------------------------------------------------------------+");
 
                         System.Threading.Thread.Sleep(1000);
-                        ClearCurrentConsoleLine(0, 12);
-                        ClearCurrentConsoleLine(0, 13);
+                        ClearCurrentConsoleLine(0, 10);
+                        ClearCurrentConsoleLine(0, 11);
                         input = "";
                     }
                     else
@@ -1051,15 +1121,15 @@ namespace GerenciamentoProducao
 
                         if (input != "S" && input != "N")
                         {
-                            Console.SetCursorPosition(0, 12);
+                            Console.SetCursorPosition(0, 10);
                             Console.WriteLine("|                                                                         |");
-                            Console.SetCursorPosition(2, 12);
+                            Console.SetCursorPosition(2, 10);
                             Console.WriteLine("Confirmação inválida.");
                             Console.WriteLine("+-------------------------------------------------------------------------+");
 
                             System.Threading.Thread.Sleep(1000);
-                            ClearCurrentConsoleLine(0, 12);
-                            ClearCurrentConsoleLine(0, 13);
+                            ClearCurrentConsoleLine(0, 10);
+                            ClearCurrentConsoleLine(0, 11);
                             input = "";
                         }
                         else if (input == "S")
