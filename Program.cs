@@ -1050,7 +1050,7 @@ namespace GerenciamentoProducao
                 Console.SetCursorPosition(2, 3);
                 Console.WriteLine("{0,-10}\t{1,-20}\t{2,-15}\t{3,-15}", "N° Ordem", "Nome", "Quantidade", "Data"); // Cabeçalho da tabela
                 Console.WriteLine("+-------------------------------------------------------------------------+");
-                CreateWindow(orders.Count);
+                CreateWindow(Math.Min(orders.Count, 20));
                 Console.SetCursorPosition(2, 5);
             }
 
