@@ -748,6 +748,12 @@ namespace GerenciamentoProducao
             }
         }
 
+        /// <summary>
+        /// Atualiza o estado de "Em andamento" para "Concluído" de uma ordem.
+        /// </summary>
+        /// <param name="orderId">O ID da ordem a ser alterada.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Verdadeiro se a alteração foi bem-sucedida, falso caso contrário.</returns>
         public static bool LO_RegisterChange(int orderId, SQLiteConnector connector)
         {
             string query = @"UPDATE [Order] SET order_status = 1 WHERE order_id = @OrderId";
@@ -783,6 +789,14 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /*
+         * List Orders
+        */
+
+        /// <summary>
+        /// Confirma a intenção do usuário de continuar a alteração de estado da ordem.
+        /// </summary>
+        /// <returns>Verdadeiro se o usuário optou por confirmar, falso caso contrário.</returns>
         public static bool LO_ConfirmChange()
         {
             string? input = "";
@@ -850,6 +864,12 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /// <summary>
+        /// Método responsável para separar as informações da ordem selecionada no banco de dados e desenhá-las na tela.
+        /// </summary>
+        /// <param name="orderId">O ID da ordem que está sendo apresentada.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Verdadeiro se a ordem está com o estado "Em andamento", falso caso esteja com o estado em "Concluído" ou apresente algum erro de operação.</returns>
         public static bool LO_DetailedData(int orderId, SQLiteConnector connector)
         {
             string query = "SELECT o.*, p.product_name FROM [Order] o INNER JOIN Product p ON o.product_id = p.product_id WHERE o.order_id = @OrderId";
@@ -908,7 +928,11 @@ namespace GerenciamentoProducao
             return false;
         }
 
-        // List Orders
+        /// <summary>
+        /// Método responsável para apresentar os dados detalhados da ordem selecionada.
+        /// </summary>
+        /// <param name="orderId">O ID da ordem que está sendo apresentada.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
         public static void LO_OrderStatus(int orderId, SQLiteConnector connector)
         {
             bool repeat = true;
@@ -979,6 +1003,12 @@ namespace GerenciamentoProducao
             }
         }
 
+        /// <summary>
+        /// Carrega as ordens do banco de dados de acordo com o tipo de ordem especificada.
+        /// </summary>
+        /// <param name="orderType">O tipo de ordem a ser carregado. 0 para ordens em andamento, 1 para ordens concluídas.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Uma lista de tuplas que contém as informações das ordens carregadas. Cada tupla contém o ID da ordem, o nome do produto, a quantidade de ordens e a data de entrega.</returns>
         public static List<Tuple<int, string, int, string>> LO_LoadOrders(int orderType, SQLiteConnector connector)
         {
             List<Tuple<int, string, int, string>> orders = new List<Tuple<int, string, int, string>>();
@@ -1027,6 +1057,12 @@ namespace GerenciamentoProducao
             return orders;
         }
 
+        /// <summary>
+        /// Exibe as ordens correspondentes ao tipo de estado selecionado em uma lista interativa. 
+        /// </summary>
+        /// <param name="orderType">O tipo de ordem a ser carregado. 0 para ordens em andamento, 1 para ordens concluídas.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Uma lista de tuplas que contém as informações das ordens carregadas. Cada tupla contém o ID da ordem, o nome do produto, a quantidade de ordens e a data de entrega.</returns>
         public static bool LO_ShowOrders(int orderType, SQLiteConnector connector)
         {
             bool running = true;
@@ -1093,6 +1129,13 @@ namespace GerenciamentoProducao
             
             return false;
         }
+
+        /// <summary>
+        /// Obtém os detalhes das ordens pelo banco de dados, para utilizar na geração de relatório PDF.
+        /// </summary>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <param name="orderType">O tipo de ordem a ser recuperado. 0 para ordens em andamento, 1 para ordens concluídas.</param>
+        /// <returns>Uma lista de strings contendo os detalhes das ordens no formato "ID da Ordem: Nome do Produto - Quantidade und (Data de Entrega)".</returns>
         public static List<string> LO_FetchOrders(SQLiteConnector connector, int orderType)
         {
             List<string> orders = new List<string>();
@@ -1119,79 +1162,100 @@ namespace GerenciamentoProducao
             return orders;
         }
 
+        /// <summary>
+        /// Método responsável para gerar os relatórios em PDF.
+        /// </summary>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Retorna verdadeiro caso tudo ocorra corretamente, caso contrário retorna falso.</returns>
         public static bool LO_GeneratePDF(SQLiteConnector connector)
         {
             List<string> ordersInProgress = LO_FetchOrders(connector, 0);
             List<string> completedOrders = LO_FetchOrders(connector, 1);
 
-            using (PdfDocument document = new PdfDocument())
+            try
             {
-                PdfPage page = document.AddPage();
-                XGraphics gfx = XGraphics.FromPdfPage(page);
-                XFont font = new XFont("Verdana", 20, XFontStyle.BoldItalic);
-                XFont titleFont = new XFont("Arial", 16, XFontStyle.Bold);
-                XFont subtitleFont = new XFont("Arial", 12, XFontStyle.Bold);
-                XFont paragraphFont = new XFont("Arial", 10, XFontStyle.Regular);
-
-                // Título
-                gfx.DrawString("Relatório de Ordens - " + GetDate(), titleFont, XBrushes.Black,
-                    new XRect(0, 0, page.Width, 100),
-                    XStringFormats.Center);
-
-                // Seção de Ordens em Andamento
-                gfx.DrawString("Ordens em Andamento (" + ordersInProgress.Count + ")", subtitleFont, XBrushes.Black,
-                    new XRect(0, 30, page.Width, 100),
-                    XStringFormats.Center);
-
-                int currentY = 100;
-
-                // Adicionando detalhes das Ordens em Andamento
-                foreach (string order in ordersInProgress)
+                using (PdfDocument document = new PdfDocument())
                 {
-                    gfx.DrawString(order, paragraphFont, XBrushes.Black,
-                        new XRect(50, currentY, page.Width - 100, page.Height - 100),
-                        XStringFormats.TopLeft);
-                    currentY += 20;
-                }
+                    PdfPage page = document.AddPage();
+                    XGraphics gfx = XGraphics.FromPdfPage(page);
+                    XFont font = new XFont("Verdana", 20, XFontStyle.BoldItalic);
+                    XFont titleFont = new XFont("Arial", 16, XFontStyle.Bold);
+                    XFont subtitleFont = new XFont("Arial", 12, XFontStyle.Bold);
+                    XFont paragraphFont = new XFont("Arial", 10, XFontStyle.Regular);
 
-                PdfPage page2 = document.AddPage();
-                XGraphics gfx2 = XGraphics.FromPdfPage(page2);
+                    // Título
+                    gfx.DrawString("Relatório de Ordens - " + GetDate(), titleFont, XBrushes.Black,
+                        new XRect(0, 0, page.Width, 100),
+                        XStringFormats.Center);
 
-                gfx2.DrawString("Relatório de Ordens - " + GetDate(), titleFont, XBrushes.Black,
-            new XRect(0, 0, page2.Width, 100),
-            XStringFormats.Center);
+                    // Seção de Ordens em Andamento
+                    gfx.DrawString("Ordens em Andamento (" + ordersInProgress.Count + ")", subtitleFont, XBrushes.Black,
+                        new XRect(0, 30, page.Width, 100),
+                        XStringFormats.Center);
 
-                gfx2.DrawString("Ordens Concluídas (" + completedOrders.Count + ")", subtitleFont, XBrushes.Black,
-                    new XRect(0, 30, page2.Width, 100),
-                    XStringFormats.Center);
+                    int currentY = 100;
 
-                currentY = 100;
-
-                // Adicionando detalhes das Ordens em Andamento
-                foreach (string order in completedOrders)
-                {
-                    gfx2.DrawString(order, paragraphFont, XBrushes.Black,
-                        new XRect(50, currentY, page.Width - 100, page.Height - 100),
-                        XStringFormats.TopLeft);
-                    currentY += 20;
-                }
-
-                const string filename = "Report.pdf";
-                document.Save(filename);
-
-                if (File.Exists(filename))
-                {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    // Adicionando detalhes das Ordens em Andamento
+                    foreach (string order in ordersInProgress)
                     {
-                        FileName = filename,
-                        UseShellExecute = true
-                    });
+                        gfx.DrawString(order, paragraphFont, XBrushes.Black,
+                            new XRect(50, currentY, page.Width - 100, page.Height - 100),
+                            XStringFormats.TopLeft);
+                        currentY += 20;
+                    }
+
+                    PdfPage page2 = document.AddPage();
+                    XGraphics gfx2 = XGraphics.FromPdfPage(page2);
+
+                    gfx2.DrawString("Relatório de Ordens - " + GetDate(), titleFont, XBrushes.Black,
+                new XRect(0, 0, page2.Width, 100),
+                XStringFormats.Center);
+
+                    gfx2.DrawString("Ordens Concluídas (" + completedOrders.Count + ")", subtitleFont, XBrushes.Black,
+                        new XRect(0, 30, page2.Width, 100),
+                        XStringFormats.Center);
+
+                    currentY = 100;
+
+                    // Adicionando detalhes das Ordens em Andamento
+                    foreach (string order in completedOrders)
+                    {
+                        gfx2.DrawString(order, paragraphFont, XBrushes.Black,
+                            new XRect(50, currentY, page.Width - 100, page.Height - 100),
+                            XStringFormats.TopLeft);
+                        currentY += 20;
+                    }
+
+                    const string filename = "Report.pdf";
+                    document.Save(filename);
+
+                    if (File.Exists(filename))
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = filename,
+                            UseShellExecute = true
+                        });
+                    } else
+                    {
+                        return false;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao gerar o PDF: " + ex);
+                return false;
             }
 
             return true;
         }
 
+        /// <summary>
+        /// Apresenta um menu interativo para listar e alterar estado de ordens e para gerar relatório PDF.
+        /// </summary>
+        /// <param name="connector">O conector SQLite utilizado para acessar o banco de dados.</param>
         public static void ListOrders(SQLiteConnector connector)
         {
             bool listRunning = true;
