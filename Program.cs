@@ -4,6 +4,15 @@ using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using System.Diagnostics;
 
+/*
+ * Gerenciamento de Controle de Produção - Desafio Técnico
+ * Desenvolvido por: Marcos Vinícios do Carmo Ramos
+ * (013) 98131-4531
+ * www.github.com/MarcosWolf/
+ * www.marcoswolf.com.br/
+ * www.linkedin.com/in/MarcosWolf
+*/
+
 namespace GerenciamentoProducao
 {
     /// <summary>
@@ -297,6 +306,7 @@ namespace GerenciamentoProducao
         /// <summary>
         /// Valida os dados de entrada referentes ao código do Produto.
         /// </summary>
+        /// /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
         /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Id</returns>
         public static string MP_ValidateProductInput(SQLiteConnector connector)
         {
@@ -393,6 +403,11 @@ namespace GerenciamentoProducao
             return input;
         }
 
+        /// <summary>
+        /// Gerencia a atualização de um produto no banco de dados. Solicita a entrada do ID do produto e a quantidade a ser adicionada,
+        /// confirma a operação e atualiza a quantidade do produto. Exibe mensagens de sucesso ou falha de atualização.
+        /// </summary>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
         public static void ManageProduct(SQLiteConnector connector)
         {
             bool repeat = true;
