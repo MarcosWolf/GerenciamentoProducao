@@ -1123,6 +1123,7 @@ namespace GerenciamentoProducao
                     {
                         int selectedOrderId = orders[selectedItemIndex].Item1;
                         LO_OrderStatus(selectedOrderId, connector);
+                        selectedItemIndex = 0;
                         orders = LO_LoadOrders(orderType, connector);
                     }
                     else if (key.Key == ConsoleKey.Escape)
