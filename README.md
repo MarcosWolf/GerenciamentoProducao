@@ -36,17 +36,17 @@ O banco de dados utilizado na aplicação foi o SQLite. Ele é amplamente conhec
 
 Nesta tela principal, o usuário tem a opção de escolher: Registrar uma nova ordem de produção, Listar ordens existentes e Alterar seu estado, Cadastrar novos produtos e Gerenciar a quantidade de seus estoques.
 
-<img src="https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/efabd923-275a-4b19-9759-b6a695e61445" width="80%" />
+![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/efabd923-275a-4b19-9759-b6a695e61445")
 
 Ao escolher a opção Registrar Ordem, o usuário deve inserir o código do Produto, a quantidade que irá ser utilizada no processo e a data estipulada para a entrega.
 
-<img src="https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/d58e9f75-b556-4e9b-a725-a52b9e7d1e1c" width="80%" />
+![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/d58e9f75-b556-4e9b-a725-a52b9e7d1e1c")
 
-<img src="https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/0399b7ee-83bf-46ee-aca3-1d0139f9c611" width="80%" />
+![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/0399b7ee-83bf-46ee-aca3-1d0139f9c611")
 
 A aplicação permite listar Ordens já existentes para realizar acompanhamento e Gerar relatórios, são separadas em dois estados: Em andamento e Concluídas; Além disso, é possível gerar um relatório em PDF com os dados.
 
-<img src="https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/0c0dfc8c-dcfc-4d82-a700-70e26b18e4ff" width="80%" />
+![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/0c0dfc8c-dcfc-4d82-a700-70e26b18e4ff)
 
 Listando ordens em andamento; Ao pressionar a tecla ENTER, podemos ver com mais detalhes as informações da ordem e também é possível alterar o seu estado.
 
