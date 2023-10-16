@@ -85,6 +85,11 @@ namespace GerenciamentoProducao
     {
         private static bool running = true;
 
+        /// <summary>
+        /// Método para facilitar na hora de precisar limpar uma linha.
+        /// </summary>
+        /// <param name="left">Indica a posição horizontal do Console que deve ser selecionada.</param>
+        /// <param name="top">Indica a posição vertical do Console que deve ser selecionada.</param>
         public static void ClearCurrentConsoleLine(int left, int top)
         {
             Console.SetCursorPosition(left, top);
@@ -92,6 +97,10 @@ namespace GerenciamentoProducao
             Console.SetCursorPosition(left, top);
         }
 
+        /// <summary>
+        /// Método para obter a data atual.
+        /// </summary>
+        /// <returns>Retorna a data formada no padrão dd/MM/yyyy.</returns>
         public static string GetDate()
         {
             DateTime currentDate = DateTime.Now;
@@ -99,6 +108,10 @@ namespace GerenciamentoProducao
             return formatedDate;
         }
 
+        /// <summary>
+        /// Método para facilitar na hora de precisar fazer as bordas da janela.
+        /// </summary>
+        /// <param name="quantity">Variável para especificar a quantidade necessária de linhas durante o laço.</param>
         public static void CreateWindow(int quantity)
         {
             for (int i = 0; i < quantity; i++)
@@ -106,6 +119,10 @@ namespace GerenciamentoProducao
                 Console.WriteLine("|                                                                         |");
             }
         }
+
+        /// <summary>
+        /// Método para desenhar o cabeçalho da aplicação.
+        /// </summary>
         public static void InterfaceHeader()
         {
             string currentDate = GetDate();
@@ -116,7 +133,9 @@ namespace GerenciamentoProducao
             Console.WriteLine("+------------------------------------------------------------+------------+");
         }
 
-        // Manage Product
+        /*
+         * Manage Product
+         */
 
         /// <summary>
         /// Atualiza a quantidade de um produto no banco de dados.
@@ -306,7 +325,7 @@ namespace GerenciamentoProducao
         /// <summary>
         /// Valida os dados de entrada referentes ao código do Produto.
         /// </summary>
-        /// /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
         /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Id</returns>
         public static string MP_ValidateProductInput(SQLiteConnector connector)
         {
@@ -452,8 +471,17 @@ namespace GerenciamentoProducao
             }
         }
 
-        // Register Product
+        /*
+         * Register Product
+        */
 
+        /// <summary>
+        /// Cadastra um produto no banco de dados.
+        /// </summary>
+        /// <param name="productName">O nome do produto a ser cadastrado.</param>
+        /// <param name="productQuantity">A quantidade do produto a ser inserido no banco.</param>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
+        /// <returns>Verdadeiro se a inserção foi bem-sucedida, falso caso contrário.</returns>
         public static bool RP_RegisterProduct(string productName, int productQuantity, SQLiteConnector connector)
         {
             string query = "INSERT INTO [Product] (product_name, product_quantity) VALUES (@ProductName, @ProductQuantity)";
@@ -490,6 +518,10 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /// <summary>
+        /// Confirma a intenção do usuário de continuar o processo de cadastro do produto.
+        /// </summary>
+        /// <returns>Verdadeiro se o usuário optou por confirmar, falso caso contrário.</returns>
         public static bool RP_ConfirmRegister()
         {
             string? input = "";
@@ -557,6 +589,10 @@ namespace GerenciamentoProducao
             return false;
         }
 
+        /// <summary>
+        /// Valida os dados de entrada referentes a quantidade.
+        /// </summary>
+        /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Quantidade.</returns>
         public static string RP_ValidateProductQuantity()
         {
             string? input = "";
@@ -627,6 +663,10 @@ namespace GerenciamentoProducao
             return input;
         }
 
+        /// <summary>
+        /// Valida os dados de entrada referentes ao nome do Produto.
+        /// </summary>
+        /// <returns>Se todas as validações ocorrerem corretamente, retorna o dado do input Nome</returns>
         public static string RP_ValidateProductName()
         {
             string? input = "";
@@ -662,6 +702,10 @@ namespace GerenciamentoProducao
             return input;
         }
 
+        /// <summary>
+        /// Registra um novo produto no sistema.
+        /// </summary>
+        /// <param name="connector">O conector SQLite usado para acessar o banco de dados.</param>
         public static void RegisterProduct(SQLiteConnector connector)
         {
             bool repeat = true;
