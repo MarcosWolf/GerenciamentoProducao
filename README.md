@@ -7,6 +7,13 @@ Um sistema de gestão que permite aos usuários registrar novas ordens, listar a
 * [C#](https://dotnet.microsoft.com/pt-br/languages/csharp)
 * [SQLite](https://www.sqlite.org/)
 
+### Dependências
+
+A aplicação requer o .NET Framework para executar corretamente. Certifique-se de que o .NET Framework esteja atualizado em seu sistema. Você pode baixar a versão mais recente do .NET Framework no site oficial da Microsoft.
+
+https://dotnet.microsoft.com/pt-br/download/dotnet-framework
+
+
 ### Como rodar o projeto
 
 Clone o repositório para o seu computador
