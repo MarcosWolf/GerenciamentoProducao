@@ -664,6 +664,41 @@ namespace GerenciamentoProducao
             }
         }
 
+        public static bool LO_RegisterChange(int orderId, SQLiteConnector connector)
+        {
+            string query = @"UPDATE [Order] SET order_status = 1 WHERE order_id = @OrderId";
+
+            try
+            {
+                using (var command = new SQLiteCommand(query, connector.GetConnection()))
+                {
+                    command.Parameters.AddWithValue("OrderId", orderId);
+
+                    connector.OpenConnection();
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro ao realizar consulta: " + ex);
+            }
+            finally
+            {
+                connector.CloseConnection();
+            }
+
+            return false;
+        }
+
         public static bool LO_ConfirmChange()
         {
             string? input = "";
@@ -675,10 +710,10 @@ namespace GerenciamentoProducao
                     Console.SetCursorPosition(0, 10);
                     Console.WriteLine("|                                                                         |");
                     Console.SetCursorPosition(2, 10);
-                    Console.WriteLine("Deseja confirmar a entrada? (S/N):");
+                    Console.WriteLine("Deseja confirmar a alteração? (S/N):");
                     Console.WriteLine("+-------------------------------------------------------------------------+");
                     ClearCurrentConsoleLine(0, 12);
-                    Console.SetCursorPosition(37, 10);
+                    Console.SetCursorPosition(39, 10);
                     input = Console.ReadLine();
 
                     if (input == null && string.IsNullOrWhiteSpace(input))
@@ -822,7 +857,25 @@ namespace GerenciamentoProducao
 
                         if (changeStatusIsConfirmed)
                         {
+                            bool isStatusRegistered = LO_RegisterChange(orderId, connector);
 
+                            if (isStatusRegistered)
+                            {
+                                repeat = false;
+                                InterfaceHeader();
+                                Console.SetCursorPosition(0, 3);
+                                Console.WriteLine("|                                                                         |");
+                                Console.SetCursorPosition(2, 3);
+                                Console.WriteLine("Ordem alterada com sucesso. Pressione ENTER para voltar ao menu.");
+                                Console.WriteLine("+-------------------------------------------------------------------------+");
+                                Console.SetCursorPosition(68, 3);
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                InterfaceHeader();
+                            }
                         }
                     }
                     else if (keyUnfinished.Key == ConsoleKey.Escape)
@@ -831,11 +884,13 @@ namespace GerenciamentoProducao
                     }
 
                 }
-
-                ConsoleKeyInfo keyFinished = Console.ReadKey();
-                if (keyFinished.Key == ConsoleKey.Escape)
+                else
                 {
-                    break; // Sai do loop while quando a tecla "ESC" é pressionada
+                    ConsoleKeyInfo keyFinished = Console.ReadKey();
+                    if (keyFinished.Key == ConsoleKey.Escape)
+                    {
+                        break; // Sai do loop while quando a tecla "ESC" é pressionada
+                    }
                 }
             }
         }
