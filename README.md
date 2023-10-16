@@ -38,6 +38,18 @@ GerenciamentoProducao.exe
 
 O banco de dados utilizado na aplicação foi o SQLite. Ele é amplamente conhecido por sua confiabilidade, eficiência e facilidade de uso. Costuma ser utilizado em aplicações que precisam utilizar um banco de dados local. 
 
+[![](https://mermaid.ink/img/pako:eNp9Uc2KAjEMfpWS6-oLlD16lV3wWljCJLrFmdRNU2HQeXerHZQB2V7afj_J1_QCXSIGD12POW8iHhSHIK6ub01UOnOf1_XafSmxLnDvPqKYO7XbT6Slq9I70yiHp0Jw4P8q_BUUizYGaapHotb40hDXDOkOPRu69zkW2lfpmcotWmOJ-3hmHTdo_MacDa3kRkxBYAUD64CR6tQewQLYL9e3ga9HQj0GCDJVHRZLu1E68KaFV1BOVFvMQwa_xz5XlCla0u38DfdtugEzbYhP?type=png)](https://mermaid.live/edit#pako:eNp9Uc2KAjEMfpWS6-oLlD16lV3wWljCJLrFmdRNU2HQeXerHZQB2V7afj_J1_QCXSIGD12POW8iHhSHIK6ub01UOnOf1_XafSmxLnDvPqKYO7XbT6Slq9I70yiHp0Jw4P8q_BUUizYGaapHotb40hDXDOkOPRu69zkW2lfpmcotWmOJ-3hmHTdo_MacDa3kRkxBYAUD64CR6tQewQLYL9e3ga9HQj0GCDJVHRZLu1E68KaFV1BOVFvMQwa_xz5XlCla0u38DfdtugEzbYhP)
+
+## Funcionalidades
+
+- [X] Registrar Ordem de Fabricação
+- [X] Lista Interativa com ordens existentes
+- [X] Geração de Relatórios em PDF
+- [X] Alteração do estado de processo da ordem
+- [X] Cadastro de novos produtos
+- [X] Gerenciamento de produtos
+- [X] Tratamento de exceções e validações de erros
+
 ## Funcionamento
 
 
