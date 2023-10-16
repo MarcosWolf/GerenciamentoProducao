@@ -66,6 +66,12 @@ Agora a ordem se encontra no estado Concluído
 
 ![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/b7b97e70-1fa7-415e-83fd-8ea234f0500e)
 
+Como dito anteriormente, também é possível gerar um relatório PDF das ordens:
+![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/5fc11f82-24b0-4c6e-bff0-eafc7d086a37)
+
+![image](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/4382efbf-5404-4226-a9cc-7009714c379b)
+
+
 
 
 
