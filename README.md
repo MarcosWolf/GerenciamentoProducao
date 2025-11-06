@@ -90,8 +90,6 @@ Como dito anteriormente, também é possível gerar um relatório PDF das ordens
 
 ![11](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/66368e48-0e02-435b-a446-7df62f797ffb)
 
-![12](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/955248d0-e82d-43e2-b983-d878f24168b1)
-
 Voltando para o Menu Principal, temos a opção de Cadastrar Produto; É solicitado o nome e a quantidade inicial de materiais para fabricação do produto.
 
 ![13](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/47640a52-68ff-4243-80ca-313c85d124d9)
@@ -106,19 +104,6 @@ Assim quando for realizada uma nova ordem, a quantidade de materiais serão sufi
 
 ![16](https://github.com/MarcosWolf/GerenciamentoProducao/assets/26293082/9c91cd1c-1d10-4f33-b025-5d2aa3d1fc20)
 
-##  Autor
-
-   <a href="https://www.marcoswolf.com.br/">
-    <img style="width:100px" src="https://avatars.githubusercontent.com/u/26293082?v=4" alt=""/>
-    <br />    
-   </a>
-   Marcos Vinícios
-   
-   <div>
-   	<a href="mailto:contato@marcoswolf.com.br"><img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"/></a>
-   	<a href="https://www.linkedin.com/in/marcoswolf/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
-   </div>
-</div>
 
 
 
